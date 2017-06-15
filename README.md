@@ -13,9 +13,14 @@ $ composer require inc2734/wp-oembed-blog-card
 ```
 <?php
 // When Using composer auto loader
-// $ogp = new Inc2734\WP_oEmbed_Blog_Card\oEmbed_Blog_Card();
+// $Blog_Card = new Inc2734\WP_oEmbed_Blog_Card\oEmbed_Blog_Card();
 
 // When not Using composer auto loader
 include_once( get_template_directory() . '/vendor/inc2734/wp-oembed-blog-card/src/wp-oembed-blog-card.php' );
-$ogp = new Inc2734_WP_oEmbed_Blog_Card();
+$Blog_Card = new Inc2734_WP_oEmbed_Blog_Card();
+```
+
+```
+// Using default styles (.scss)
+@import 'vendor/inc2734/wp-oembed-blog-card/src/assets/scss/wp-oembed-blog-card';
 ```

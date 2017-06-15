@@ -24,7 +24,6 @@ class Inc2734_WP_oEmbed_Blog_Card {
 		if ( has_filter( 'the_content', 'wpautop' ) ) {
 			add_filter( 'the_content', array( $this, '_fix_wpautop' ) );
 		}
-		add_action( 'admin_enqueue_scripts', array( $this, '_admin_enqueue_scripts' ) );
 	}
 
 	/**
@@ -48,13 +47,13 @@ class Inc2734_WP_oEmbed_Blog_Card {
 	 */
 	public function _fix_wpautop( $content ) {
 		$content = preg_replace(
-			'@(<div class="c-blog-card"><a href=".+?" target="_blank">)</p>@',
+			'@(<div class="wp-oembed-blog-card"><a href=".+?" target="_blank">)</p>@',
 			'$1',
 			$content
 		);
 
 		$content = preg_replace(
-			'@(<div class="c-blog-card__domain">.+?</div>\s*?)<p>(</a></div>)@',
+			'@(<div class="wp-oembed-blog-card__domain">.+?</div>\s*?)<p>(</a></div>)@',
 			'$1$2',
 			$content
 		);
@@ -75,21 +74,6 @@ class Inc2734_WP_oEmbed_Blog_Card {
 				delete_post_meta( $post_id, $meta_key );
 			}
 		}
-	}
-
-	/**
-	 * Enqueue assets
-	 *
-	 * @return void
-	 */
-	public function _admin_enqueue_scripts() {
-		$theme = wp_get_theme();
-		wp_enqueue_style(
-			get_stylesheet(),
-			get_template_directory_uri() . '/assets/css/admin.min.css',
-			array(),
-			$theme->get( 'Version' )
-		);
 	}
 
 	/**
@@ -132,18 +116,18 @@ class Inc2734_WP_oEmbed_Blog_Card {
 
 		ob_start();
 		?>
-		<div class="c-blog-card">
+		<div class="wp-oembed-blog-card">
 			<a href="<?php echo esc_url( $cache['permalink'] ); ?>" target="_blank">
 				<?php if ( $cache['thumbnail'] ) : ?>
-					<div class="c-blog-card__figure">
+					<div class="wp-oembed-blog-card__figure">
 						<img src="<?php echo esc_url( $cache['thumbnail'] ); ?>" alt="">
 					</div>
 				<?php endif; ?>
-				<div class="c-blog-card__body">
-					<div class="c-blog-card__title">
+				<div class="wp-oembed-blog-card__body">
+					<div class="wp-oembed-blog-card__title">
 						<?php echo esc_html( $cache['title'] ); ?>
 					</div>
-					<div class="c-blog-card__description">
+					<div class="wp-oembed-blog-card__description">
 						<?php
 						if ( function_exists( 'mb_strimwidth' ) ) {
 							echo esc_html( mb_strimwidth( $cache['description'], 0, 160, '…', 'utf-8' ) );
@@ -153,9 +137,9 @@ class Inc2734_WP_oEmbed_Blog_Card {
 						?>
 					</div>
 				</div>
-				<div class="c-blog-card__domain">
+				<div class="wp-oembed-blog-card__domain">
 					<?php if ( $cache['favicon'] ) : ?>
-						<img class="c-blog-card__favicon" src="<?php echo esc_url( $cache['favicon'] ); ?>" alt="">
+						<img class="wp-oembed-blog-card__favicon" src="<?php echo esc_url( $cache['favicon'] ); ?>" alt="">
 					<?php endif; ?>
 					<?php echo esc_html( $cache['domain'] ); ?>
 				</div>
