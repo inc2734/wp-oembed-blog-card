@@ -6,7 +6,7 @@
 
   > a {
     display: block;
-    color: $color-text;
+    color: #000;
     text-decoration: none;
   }
 
@@ -25,7 +25,7 @@
   }
 
   &__description {
-    @include margin-top(10px);
+    margin-top: 10px;
     font-size: 14px;
     line-height: 1.5;
   }
@@ -34,7 +34,7 @@
     clear: both;
     color: #999;
     font-size: 12px;
-    @include padding-top(5px);
+    padding-top: 5px;
   }
 
   &__favicon {
