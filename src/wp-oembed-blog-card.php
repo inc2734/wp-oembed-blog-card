@@ -15,7 +15,7 @@ class Inc2734_WP_oEmbed_Blog_Card {
 		$whitelist = array_keys( $oembed->providers );
 		foreach ( $whitelist as $key => $value ) {
 			$value = preg_replace( '@^#(.+)#i$@', '$1', $value );
-			$whitelist[$key] = $value;
+			$whitelist[ $key ] = $value;
 		}
 		$regex = '@^(?!.*(' . join( '|', $whitelist ) . ')).*$@i';
 		wp_embed_register_handler( 'wp_oembed_blog_card', $regex, array( $this, '_wp_embed_handler' ) );

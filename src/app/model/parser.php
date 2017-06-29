@@ -27,33 +27,42 @@ class Inc2734_WP_oEmbed_Blog_Card_Parser {
 	 */
 	public function __construct( $url ) {
 		$this->url = $url;
+		$response  = wp_remote_get( $this->url );
+		if ( wp_http_validate_url( $url ) ) {
+			if ( is_array( $response ) && isset( $response['body' ] ) ) {
+				$this->content = $response['body'];
+			}
 
-		$context = stream_context_create( array(
-			'http' => array(
-				'ignore_errors' => true,
-			)
-		) );
-
-		$this->content = file_get_contents( $url, false, $context );
-		if ( function_exists( 'mb_convert_encoding' ) ) {
-			foreach( array( 'UTF-8', 'SJIS', 'EUC-JP', 'ASCII', 'JIS' ) as $encode ) {
-				$encoded_content = mb_convert_encoding( $this->content, $encode, $encode );
-				if ( strcmp( $this->content, $encoded_content ) === 0 ) {
-					$from_encode = $encode;
-					break;
+			if ( is_array( $response ) && isset( $response['response'] ) ) {
+				if ( is_array( $response['response'] ) && isset( $response['response']['code'] ) ) {
+					$this->status_code = $response['response']['code'];
 				}
 			}
-			if ( ! empty( $from_encode ) ) {
-				$this->content = mb_convert_encoding( $this->content, get_bloginfo( 'charset' ), $from_encode );
+		} else {
+			if ( WP_Filesystem() ) {
+				global $wp_filesystem;
+				$this->content = $wp_filesystem->get_contents( $url );
+				if ( $this->content ) {
+					$this->status_code = 200;
+				}
 			}
 		}
 
-		if ( ! empty( $http_response_header[0] ) ) {
-			preg_match( '/HTTP\/\d\.\d ([0-9]{3})/', $http_response_header[0], $reg );
-			if ( $reg[1] ) {
-				$this->status_code = $reg[1];
+		if ( $this->content ) {
+			if ( function_exists( 'mb_convert_encoding' ) && $this->content ) {
+				foreach( array( 'UTF-8', 'SJIS', 'EUC-JP', 'ASCII', 'JIS' ) as $encode ) {
+					$encoded_content = mb_convert_encoding( $this->content, $encode, $encode );
+					if ( strcmp( $this->content, $encoded_content ) === 0 ) {
+						$from_encode = $encode;
+						break;
+					}
+				}
+				if ( ! empty( $from_encode ) ) {
+					$this->content = mb_convert_encoding( $this->content, get_bloginfo( 'charset' ), $from_encode );
+				}
 			}
 		}
+
 		if ( ! $this->status_code ) {
 			$this->status_code = '404';
 		}

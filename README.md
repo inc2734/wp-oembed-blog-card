@@ -16,7 +16,7 @@ $ composer require inc2734/wp-oembed-blog-card
 // $Blog_Card = new Inc2734\WP_oEmbed_Blog_Card\oEmbed_Blog_Card();
 
 // When not Using composer auto loader
-include_once( get_template_directory() . '/vendor/inc2734/wp-oembed-blog-card/src/wp-oembed-blog-card.php' );
+include_once( get_theme_file_path( '/vendor/inc2734/wp-oembed-blog-card/src/wp-oembed-blog-card.php' ) );
 $Blog_Card = new Inc2734_WP_oEmbed_Blog_Card();
 ```
 
