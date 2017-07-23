@@ -1,16 +1,22 @@
 <?php
-$includes = array(
-	'/app/model',
-);
-foreach ( $includes as $include ) {
-	foreach ( glob( __DIR__ . $include . '/*.php' ) as $file ) {
-		require_once( $file );
-	}
-}
+/**
+ * @package inc2734/wp-oembed-blog-card
+ * @author inc2734
+ * @license GPL-2.0+
+ */
 
 class Inc2734_WP_oEmbed_Blog_Card {
 
 	public function __construct() {
+		$includes = array(
+			'/app/model',
+		);
+		foreach ( $includes as $include ) {
+			foreach ( glob( __DIR__ . $include . '/*.php' ) as $file ) {
+				require_once( $file );
+			}
+		}
+
 		$oembed    = _wp_oembed_get_object();
 		$whitelist = array_keys( $oembed->providers );
 		foreach ( $whitelist as $key => $value ) {

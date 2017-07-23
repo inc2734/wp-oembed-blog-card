@@ -1,4 +1,10 @@
 <?php
+/**
+ * @package inc2734/wp-oembed-blog-card
+ * @author inc2734
+ * @license GPL-2.0+
+ */
+
 class Inc2734_WP_oEmbed_Blog_Card_Parser {
 
 	/**
