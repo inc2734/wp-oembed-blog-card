@@ -1,5 +1,5 @@
 <?php
-class oEmbed_Blog_Card_Parser_Test extends WP_UnitTestCase {
+class OEmbed_Blog_Card_Parser_Test extends WP_UnitTestCase {
 
 	public function setup() {
 		parent::setup();
@@ -14,10 +14,10 @@ class oEmbed_Blog_Card_Parser_Test extends WP_UnitTestCase {
 	 * @test
 	 */
 	public function get_status_code() {
-		$Parser = new Inc2734_WP_oEmbed_Blog_Card_Parser( home_url( '/404' ) );
+		$Parser = new Inc2734_WP_OEmbed_Blog_Card_Parser( home_url( '/404' ) );
 		$this->assertEquals( 404, $Parser->get_status_code() );
 
-		$Parser = new Inc2734_WP_oEmbed_Blog_Card_Parser( home_url( '/' ) );
+		$Parser = new Inc2734_WP_OEmbed_Blog_Card_Parser( home_url( '/' ) );
 		$this->assertEquals( 200, $Parser->get_status_code() );
 	}
 
@@ -26,11 +26,11 @@ class oEmbed_Blog_Card_Parser_Test extends WP_UnitTestCase {
 	 */
 	public function get_title() {
 		$uploaded_template_path = $this->_create_page( 'title.html' );
-		$Parser = new Inc2734_WP_oEmbed_Blog_Card_Parser( $uploaded_template_path );
+		$Parser = new Inc2734_WP_OEmbed_Blog_Card_Parser( $uploaded_template_path );
 		$this->assertEquals( 'Title', $Parser->get_title() );
 
 		$uploaded_template_path = $this->_create_page( 'ogp-title.html' );
-		$Parser = new Inc2734_WP_oEmbed_Blog_Card_Parser( $uploaded_template_path );
+		$Parser = new Inc2734_WP_OEmbed_Blog_Card_Parser( $uploaded_template_path );
 		$this->assertEquals( 'OGP Title', $Parser->get_title() );
 	}
 
@@ -39,7 +39,7 @@ class oEmbed_Blog_Card_Parser_Test extends WP_UnitTestCase {
 	 */
 	public function get_permalink() {
 		$uploaded_template_path = $this->_create_page( 'ogp-url.html' );
-		$Parser = new Inc2734_WP_oEmbed_Blog_Card_Parser( $uploaded_template_path );
+		$Parser = new Inc2734_WP_OEmbed_Blog_Card_Parser( $uploaded_template_path );
 		$this->assertEquals( 'http://example.org/ogp-url.html', $Parser->get_permalink() );
 	}
 
@@ -48,11 +48,11 @@ class oEmbed_Blog_Card_Parser_Test extends WP_UnitTestCase {
 	 */
 	public function get_description() {
 		$uploaded_template_path = $this->_create_page( 'description.html' );
-		$Parser = new Inc2734_WP_oEmbed_Blog_Card_Parser( $uploaded_template_path );
+		$Parser = new Inc2734_WP_OEmbed_Blog_Card_Parser( $uploaded_template_path );
 		$this->assertEquals( 'Description', $Parser->get_description() );
 
 		$uploaded_template_path = $this->_create_page( 'ogp-description.html' );
-		$Parser = new Inc2734_WP_oEmbed_Blog_Card_Parser( $uploaded_template_path );
+		$Parser = new Inc2734_WP_OEmbed_Blog_Card_Parser( $uploaded_template_path );
 		$this->assertEquals( 'OGP Description', $Parser->get_description() );
 	}
 
@@ -61,7 +61,7 @@ class oEmbed_Blog_Card_Parser_Test extends WP_UnitTestCase {
 	 */
 	public function get_domain() {
 		$uploaded_template_path = $this->_create_page( 'ogp-url.html' );
-		$Parser = new Inc2734_WP_oEmbed_Blog_Card_Parser( $uploaded_template_path );
+		$Parser = new Inc2734_WP_OEmbed_Blog_Card_Parser( $uploaded_template_path );
 		$this->assertEquals( 'example.org', $Parser->get_domain() );
 	}
 
@@ -70,11 +70,11 @@ class oEmbed_Blog_Card_Parser_Test extends WP_UnitTestCase {
 	 */
 	public function get_favicon() {
 		$uploaded_template_path = $this->_create_page( 'icon.html' );
-		$Parser = new Inc2734_WP_oEmbed_Blog_Card_Parser( $uploaded_template_path );
+		$Parser = new Inc2734_WP_OEmbed_Blog_Card_Parser( $uploaded_template_path );
 		$this->assertEquals( 'favicon.ico', $Parser->get_favicon() );
 
 		$uploaded_template_path = $this->_create_page( 'shortcut-icon.html' );
-		$Parser = new Inc2734_WP_oEmbed_Blog_Card_Parser( $uploaded_template_path );
+		$Parser = new Inc2734_WP_OEmbed_Blog_Card_Parser( $uploaded_template_path );
 		$this->assertEquals( 'favicon.ico', $Parser->get_favicon() );
 	}
 
@@ -83,7 +83,7 @@ class oEmbed_Blog_Card_Parser_Test extends WP_UnitTestCase {
 	 */
 	public function get_thumbnail() {
 		$uploaded_template_path = $this->_create_page( 'ogp-image.html' );
-		$Parser = new Inc2734_WP_oEmbed_Blog_Card_Parser( $uploaded_template_path );
+		$Parser = new Inc2734_WP_OEmbed_Blog_Card_Parser( $uploaded_template_path );
 		$this->assertEquals( 'http://example.org/thumb.jpg', $Parser->get_thumbnail() );
 	}
 

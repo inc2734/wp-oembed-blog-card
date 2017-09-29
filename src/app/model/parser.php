@@ -5,7 +5,10 @@
  * @license GPL-2.0+
  */
 
-class Inc2734_WP_oEmbed_Blog_Card_Parser {
+/**
+ * Parsing web page class
+ */
+class Inc2734_WP_OEmbed_Blog_Card_Parser {
 
 	/**
 	 * URL of the page you want to blog card
@@ -30,12 +33,14 @@ class Inc2734_WP_oEmbed_Blog_Card_Parser {
 
 	/**
 	 * @param string $url
+	 * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+	 * @SuppressWarnings(PHPMD.NPathComplexity)
 	 */
 	public function __construct( $url ) {
 		$this->url = $url;
 		$response  = wp_remote_get( $this->url );
 		if ( wp_http_validate_url( $url ) ) {
-			if ( is_array( $response ) && isset( $response['body' ] ) ) {
+			if ( is_array( $response ) && isset( $response['body'] ) ) {
 				$this->content = $response['body'];
 			}
 
@@ -56,7 +61,7 @@ class Inc2734_WP_oEmbed_Blog_Card_Parser {
 
 		if ( $this->content ) {
 			if ( function_exists( 'mb_convert_encoding' ) && $this->content ) {
-				foreach( array( 'UTF-8', 'SJIS', 'EUC-JP', 'ASCII', 'JIS' ) as $encode ) {
+				foreach ( array( 'UTF-8', 'SJIS', 'EUC-JP', 'ASCII', 'JIS' ) as $encode ) {
 					$encoded_content = mb_convert_encoding( $this->content, $encode, $encode );
 					if ( strcmp( $this->content, $encoded_content ) === 0 ) {
 						$from_encode = $encode;

@@ -5,7 +5,10 @@
  * @license GPL-2.0+
  */
 
-class Inc2734_WP_oEmbed_Blog_Card {
+/**
+ * Enable blog card that target area all web pages
+ */
+class Inc2734_WP_OEmbed_Blog_Card {
 
 	public function __construct() {
 		$includes = array(
@@ -74,8 +77,9 @@ class Inc2734_WP_oEmbed_Blog_Card {
 	 * @return void
 	 */
 	public function _save_post( $post_id ) {
-		$custom = get_post_custom( $post_id );
-		foreach ( $custom as $meta_key => $meta_value ) {
+		$custom    = get_post_custom( $post_id );
+		$meta_keys = array_keys( $custom );
+		foreach ( $meta_keys as $meta_key ) {
 			if ( preg_match( '/^_wp_oembed_blog_card_/', $meta_key ) ) {
 				delete_post_meta( $post_id, $meta_key );
 			}
@@ -87,6 +91,8 @@ class Inc2734_WP_oEmbed_Blog_Card {
 	 *
 	 * @param string $url
 	 * @return string
+	 * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+	 * @SuppressWarnings(PHPMD.NPathComplexity)
 	 */
 	protected function _get_template( $url ) {
 		global $post;
@@ -101,29 +107,35 @@ class Inc2734_WP_oEmbed_Blog_Card {
 		}
 
 		if ( ! $cache ) {
-			$Parser = new Inc2734_WP_oEmbed_Blog_Card_Parser( $url );
+			$parser = new Inc2734_WP_OEmbed_Blog_Card_Parser( $url );
 
-			if ( 200 != $Parser->get_status_code() && 301 != $Parser->get_status_code() ) {
+			if ( 200 != $parser->get_status_code() && 301 != $parser->get_status_code() ) {
 				if ( get_post_meta( $post->ID, $this->_get_meta_key( $url ), true ) ) {
 					delete_post_meta( $post->ID, $this->_get_meta_key( $url ) );
 				}
 				return;
 			}
 
-			$cache['permalink']   = $Parser->get_permalink();
-			$cache['thumbnail']   = $Parser->get_thumbnail();
-			$cache['title']       = $Parser->get_title();
-			$cache['description'] = $Parser->get_description();
-			$cache['favicon']     = $Parser->get_favicon();
-			$cache['domain']      = $Parser->get_domain();
+			$cache['permalink']   = $parser->get_permalink();
+			$cache['thumbnail']   = $parser->get_thumbnail();
+			$cache['title']       = $parser->get_title();
+			$cache['description'] = $parser->get_description();
+			$cache['favicon']     = $parser->get_favicon();
+			$cache['domain']      = $parser->get_domain();
 
 			update_post_meta( $post->ID, $this->_get_meta_key( $url ), $cache );
+		}
+
+		if ( 0 === strpos( home_url(), $cache['permalink'] ) ) {
+			$target = '_self';
+		} else {
+			$target = '_blank';
 		}
 
 		ob_start();
 		?>
 		<div class="wp-oembed-blog-card">
-			<a href="<?php echo esc_url( $cache['permalink'] ); ?>" target="_blank">
+			<a href="<?php echo esc_url( $cache['permalink'] ); ?>" target="<?php echo esc_attr( $target ); ?>">
 				<?php if ( $cache['thumbnail'] ) : ?>
 					<div class="wp-oembed-blog-card__figure">
 						<img src="<?php echo esc_url( $cache['thumbnail'] ); ?>" alt="">
