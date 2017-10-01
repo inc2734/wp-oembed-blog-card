@@ -64,7 +64,7 @@ class Inc2734_WP_OEmbed_Blog_Card_Parser {
 			$content = $wp_filesystem->get_contents( $this->url );
 		}
 
-		if ( ! $content ) {
+		if ( empty( $content ) ) {
 			return;
 		}
 
