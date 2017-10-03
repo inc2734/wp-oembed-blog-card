@@ -56,7 +56,7 @@ class Inc2734_WP_OEmbed_Blog_Card {
 	 */
 	public function _fix_wpautop( $content ) {
 		$content = preg_replace(
-			'@(<div class="wp-oembed-blog-card"><a href=".+?" target="_blank">)</p>@',
+			'@(<div class="wp-oembed-blog-card"><a href=".+?" target=".+?">)</p>@',
 			'$1',
 			$content
 		);
@@ -126,7 +126,7 @@ class Inc2734_WP_OEmbed_Blog_Card {
 			update_post_meta( $post->ID, $this->_get_meta_key( $url ), $cache );
 		}
 
-		if ( 0 === strpos( home_url(), $cache['permalink'] ) ) {
+		if ( 0 === strpos( $cache['permalink'], home_url() ) ) {
 			$target = '_self';
 		} else {
 			$target = '_blank';
