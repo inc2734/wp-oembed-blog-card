@@ -197,11 +197,7 @@ class Inc2734_WP_OEmbed_Blog_Card_Parser {
 		$favicon = $reg[1];
 
 		if ( is_ssl() ) {
-			if ( preg_match( '|^http:|', $favicon ) ) {
-				$no_protocol = preg_replace( '|^https?:|', '', $favicon );
-				$protocol    = ( is_ssl() ) ? 'https' : 'http';
-				$favicon     = $protocol . ':' . $no_protocol;
-			}
+			$favicon = preg_replace( '|^http:|', 'https:', $favicon );
 		}
 
 		$response    = wp_remote_get( $favicon );
@@ -228,11 +224,7 @@ class Inc2734_WP_OEmbed_Blog_Card_Parser {
 		$thumbnail = $reg[1];
 
 		if ( is_ssl() ) {
-			if ( preg_match( '|^http:|', $thumbnail ) ) {
-				$no_protocol = preg_replace( '|^https?:|', '', $thumbnail );
-				$protocol    = ( is_ssl() ) ? 'https' : 'http';
-				$thumbnail   = $protocol . ':' . $no_protocol;
-			}
+			$thumbnail = preg_replace( '|^http:|', 'https:', $thumbnail );
 		}
 
 		$response    = wp_remote_get( $thumbnail );
