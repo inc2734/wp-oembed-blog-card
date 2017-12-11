@@ -109,7 +109,7 @@ class Inc2734_WP_OEmbed_Blog_Card {
 		if ( ! $cache ) {
 			$parser = new Inc2734_WP_OEmbed_Blog_Card_Parser( $url );
 
-			if ( 200 != $parser->get_status_code() && 301 != $parser->get_status_code() ) {
+			if ( 200 != $parser->get_status_code() && 304 != $parser->get_status_code() ) {
 				if ( get_post_meta( $post->ID, $this->_get_meta_key( $url ), true ) ) {
 					delete_post_meta( $post->ID, $this->_get_meta_key( $url ) );
 				}
