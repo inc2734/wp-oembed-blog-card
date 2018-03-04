@@ -5,10 +5,9 @@
  * @license GPL-2.0+
  */
 
-/**
- * Parsing web page class
- */
-class Inc2734_WP_OEmbed_Blog_Card_Parser {
+namespace Inc2734\WP_OEmbed_Blog_Card\App\Model;
+
+class Parser {
 
 	/**
 	 * URL of the page you want to blog card

@@ -14,10 +14,6 @@ $ composer require inc2734/wp-oembed-blog-card
 <?php
 // When Using composer auto loader
 $Blog_Card = new Inc2734\WP_OEmbed_Blog_Card\OEmbed_Blog_Card();
-
-// When not Using composer auto loader
-// include_once( get_theme_file_path( '/vendor/inc2734/wp-oembed-blog-card/src/wp-oembed-blog-card.php' ) );
-// $Blog_Card = new Inc2734_WP_OEmbed_Blog_Card();
 ```
 
 ```
