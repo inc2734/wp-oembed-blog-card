@@ -2,7 +2,7 @@
   "name": "inc2734/wp-oembed-blog-card",
   "description": "A library for WordPress oEmbed Blog Card.",
   "license": "GPL-2.0-or-later",
-  "version": "2.0.1",
+  "version": "2.1.0",
   "require": {
     "php": ">=5.6"
   },

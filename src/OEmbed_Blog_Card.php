@@ -12,6 +12,10 @@ use Inc2734\WP_OEmbed_Blog_Card\App\Model\Parser;
 class OEmbed_Blog_Card {
 
 	public function __construct() {
+		if ( isset( $_SERVER['REMOTE_ADDR'] ) && isset( $_SERVER['SERVER_ADDR'] ) && $_SERVER['REMOTE_ADDR'] === $_SERVER['SERVER_ADDR'] ) {
+			return;
+		}
+
 		$oembed    = _wp_oembed_get_object();
 		$whitelist = array_keys( $oembed->providers );
 		foreach ( $whitelist as $key => $value ) {
@@ -89,6 +93,10 @@ class OEmbed_Blog_Card {
 	protected function _get_template( $url ) {
 		global $post;
 
+		if ( ! isset( $post->ID ) ) {
+			return;
+		}
+
 		if ( ! $url ) {
 			return;
 		}
@@ -129,8 +137,7 @@ class OEmbed_Blog_Card {
 		<div class="wp-oembed-blog-card">
 			<a href="<?php echo esc_url( $cache['permalink'] ); ?>" target="<?php echo esc_attr( $target ); ?>">
 				<?php if ( $cache['thumbnail'] ) : ?>
-					<div class="wp-oembed-blog-card__figure">
-						<img src="<?php echo esc_url( $cache['thumbnail'] ); ?>" alt="">
+					<div class="wp-oembed-blog-card__figure" style="background-image: url(<?php echo esc_url( $cache['thumbnail'] ); ?>)">
 					</div>
 				<?php endif; ?>
 				<div class="wp-oembed-blog-card__body">
@@ -146,12 +153,12 @@ class OEmbed_Blog_Card {
 						}
 						?>
 					</div>
-				</div>
-				<div class="wp-oembed-blog-card__domain">
-					<?php if ( $cache['favicon'] ) : ?>
-						<img class="wp-oembed-blog-card__favicon" src="<?php echo esc_url( $cache['favicon'] ); ?>" alt="">
-					<?php endif; ?>
-					<?php echo esc_html( $cache['domain'] ); ?>
+					<div class="wp-oembed-blog-card__domain">
+						<?php if ( $cache['favicon'] ) : ?>
+							<img class="wp-oembed-blog-card__favicon" src="<?php echo esc_url( $cache['favicon'] ); ?>" alt="">
+						<?php endif; ?>
+						<?php echo esc_html( $cache['domain'] ); ?>
+					</div>
 				</div>
 			</a>
 		</div>

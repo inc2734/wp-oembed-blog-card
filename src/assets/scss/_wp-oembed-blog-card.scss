@@ -1,5 +1,5 @@
 .wp-oembed-blog-card {
-  border: 1px solid #ddd;
+  box-shadow: 0 0 3px 0 rgba(#000, .2);
   border-radius: 4px;
   padding: 1em;
   overflow: hidden;
@@ -13,7 +13,20 @@
   &__figure {
     float: right;
     margin-left: 1em;
-    max-width: 20%;
+    width: 40%;
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    background-size: cover;
+
+    &::before {
+      content: '';
+      display: block;
+      padding: 75% 0 0;
+    }
+
+    @media (min-width: 481px) {
+      width: 20%;
+    }
   }
 
   &__body {
@@ -25,12 +38,18 @@
   }
 
   &__description {
+    display: none;
     margin-top: 10px;
     font-size: 14px;
     line-height: 1.5;
+
+    @media (min-width: 481px) {
+      display: block;
+    }
   }
 
   &__domain {
+    margin-top: 15px;
     clear: both;
     color: #999;
     font-size: 12px;
