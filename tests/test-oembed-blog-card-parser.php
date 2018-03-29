@@ -23,6 +23,14 @@ class OEmbed_Blog_Card_Parser_Test extends WP_UnitTestCase {
 	/**
 	 * @test
 	 */
+	public function get_content_type() {
+		$Parser = new Inc2734\WP_OEmbed_Blog_Card\App\Model\Parser( home_url( '/' ) );
+		$this->assertEquals( 'text/html', $Parser->get_content_type() );
+	}
+
+	/**
+	 * @test
+	 */
 	public function get_title() {
 		$uploaded_template_path = $this->_create_page( 'title.html' );
 		$Parser = new Inc2734\WP_OEmbed_Blog_Card\App\Model\Parser( $uploaded_template_path );
@@ -70,11 +78,11 @@ class OEmbed_Blog_Card_Parser_Test extends WP_UnitTestCase {
 	public function get_favicon() {
 		$uploaded_template_path = $this->_create_page( 'icon.html' );
 		$Parser = new Inc2734\WP_OEmbed_Blog_Card\App\Model\Parser( $uploaded_template_path );
-		$this->assertNull( $Parser->get_favicon() ); // @todo http://example.org/favicon.ico not exist...
+		$this->assertEquals( 'favicon.ico', $Parser->get_favicon() );
 
 		$uploaded_template_path = $this->_create_page( 'shortcut-icon.html' );
 		$Parser = new Inc2734\WP_OEmbed_Blog_Card\App\Model\Parser( $uploaded_template_path );
-		$this->assertNull( $Parser->get_favicon() ); // @todo http://example.org/favicon.ico not exist...
+		$this->assertEquals( 'favicon.ico', $Parser->get_favicon() );
 	}
 
 	/**
@@ -83,7 +91,7 @@ class OEmbed_Blog_Card_Parser_Test extends WP_UnitTestCase {
 	public function get_thumbnail() {
 		$uploaded_template_path = $this->_create_page( 'ogp-image.html' );
 		$Parser = new Inc2734\WP_OEmbed_Blog_Card\App\Model\Parser( $uploaded_template_path );
-		$this->assertNull( $Parser->get_thumbnail() ); // @todo http://example.org/favicon.ico not exist...
+		$this->assertNull( $Parser->get_thumbnail() ); // @todo http://example.org/thumb.jpg not exist...
 	}
 
 	/**

@@ -87,8 +87,6 @@ class OEmbed_Blog_Card {
 	 *
 	 * @param string $url
 	 * @return string
-	 * @SuppressWarnings(PHPMD.CyclomaticComplexity)
-	 * @SuppressWarnings(PHPMD.NPathComplexity)
 	 */
 	protected function _get_template( $url ) {
 		global $post;
@@ -109,23 +107,45 @@ class OEmbed_Blog_Card {
 		if ( ! $cache ) {
 			$parser = new Parser( $url );
 
-			if ( 200 != $parser->get_status_code() && 304 != $parser->get_status_code() ) {
-				if ( get_post_meta( $post->ID, $this->_get_meta_key( $url ), true ) ) {
-					delete_post_meta( $post->ID, $this->_get_meta_key( $url ) );
-				}
-				return;
-			}
-
 			$cache['permalink']   = $parser->get_permalink();
 			$cache['thumbnail']   = $parser->get_thumbnail();
 			$cache['title']       = $parser->get_title();
 			$cache['description'] = $parser->get_description();
 			$cache['favicon']     = $parser->get_favicon();
 			$cache['domain']      = $parser->get_domain();
+			$cache['limit']       = time() + 60 * 60 * 24;
 
 			update_post_meta( $post->ID, $this->_get_meta_key( $url ), $cache );
+		} else {
+			if ( empty( $cache['limit'] ) || $cache['limit'] < time() ) {
+				delete_post_meta( $post->ID, $this->_get_meta_key( $url ) );
+			}
 		}
 
+		if ( $cache['title'] ) {
+			return $this->_get_blog_card_template( $cache );
+		} else {
+			return $this->_get_url_template( $url );
+		}
+	}
+
+	/**
+	 * Return url template
+	 *
+	 * @param string $url
+	 * @return string
+	 */
+	protected function _get_url_template( $url ) {
+		return sprintf( '<a href="%1$s" target="_blank">%1$s</a>', $url );
+	}
+
+	/**
+	 * Return blog card template
+	 *
+	 * @param array $cache
+	 * @return string
+	 */
+	protected function _get_blog_card_template( $cache ) {
 		if ( 0 === strpos( $cache['permalink'], home_url() ) ) {
 			$target = '_self';
 		} else {
