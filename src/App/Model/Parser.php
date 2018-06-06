@@ -82,8 +82,17 @@ class Parser {
 	public function __construct( $url ) {
 		$this->url = $url;
 
-		$response = wp_remote_get( $this->url );
-		$content  = $this->_get_content( $response );
+		if ( empty( $_SERVER['HTTP_USER_AGENT'] ) ) {
+			$user_agent = apply_filters( 'http_headers_useragent', 'WordPress/' . get_bloginfo( 'version' ) . '; ' . get_bloginfo( 'url' ) );
+		} else {
+			$user_agent = $_SERVER['HTTP_USER_AGENT'];
+		}
+
+		$response = wp_remote_get( $this->url, [
+			'timeout'    => 10,
+			'user-agent' => $user_agent,
+		] );
+		$content = $this->_get_content( $response );
 
 		$this->status_code = $this->_get_status_code( $response, $content );
 		if ( 200 != $this->get_status_code() && 304 != $this->get_status_code() ) {
