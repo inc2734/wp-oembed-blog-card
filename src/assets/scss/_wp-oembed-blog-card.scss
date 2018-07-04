@@ -12,11 +12,14 @@
 
   &__figure {
     float: right;
+    position: relative;
     margin-left: 1em;
     width: 40%;
-    background-repeat: no-repeat;
-    background-position: 50% 50%;
-    background-size: cover;
+    overflow: hidden;
+
+    @media (min-width: 481px) {
+      width: 20%;
+    }
 
     &::before {
       content: '';
@@ -24,8 +27,26 @@
       padding: 75% 0 0;
     }
 
-    @media (min-width: 481px) {
-      width: 20%;
+    img {
+      position: absolute;
+      width: auto;
+      height: auto;
+      top: 50%;
+      left: 50%;
+      min-height: 100%;
+      min-width: 100%;
+      transform: translate(-50%, -50%);
+
+      @supports (object-fit: cover) {
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        transform: none;
+      }
     }
   }
 

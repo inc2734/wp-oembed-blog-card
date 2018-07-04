@@ -157,7 +157,8 @@ class OEmbed_Blog_Card {
 		<div class="wp-oembed-blog-card">
 			<a href="<?php echo esc_url( $cache['permalink'] ); ?>" target="<?php echo esc_attr( $target ); ?>">
 				<?php if ( $cache['thumbnail'] ) : ?>
-					<div class="wp-oembed-blog-card__figure" style="background-image: url(<?php echo esc_url( $cache['thumbnail'] ); ?>)">
+					<div class="wp-oembed-blog-card__figure">
+						<img src="<?php echo esc_url( $cache['thumbnail'] ); ?>" alt="">
 					</div>
 				<?php endif; ?>
 				<div class="wp-oembed-blog-card__body">
