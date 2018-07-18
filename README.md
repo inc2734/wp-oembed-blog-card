@@ -23,7 +23,6 @@ $Blog_Card = new Inc2734\WP_OEmbed_Blog_Card\OEmbed_Blog_Card();
 
 Then just copy and paste the URL into the article!
 
-- In the post edit screen pasted url is converted to a shortcode.
 - Data used for blog cards will be cached.
 - The cache is updated when you open the post edit screen.
 - On the display screen url is converted to blog card with ajax.

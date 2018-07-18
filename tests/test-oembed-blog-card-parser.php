@@ -101,22 +101,11 @@ class OEmbed_Blog_Card_Parser_Test extends WP_UnitTestCase {
 	 * @return string Uploaded template path
 	 */
 	protected function _create_page( $file_name ) {
-		$wp_upload_dir = wp_upload_dir();
-		$upload_dir    = $wp_upload_dir['basedir'];
-
 		$template_path = __DIR__ . '/templates/' . $file_name;
 		if ( ! file_exists( $template_path ) ) {
 			throw new Exception( 'Test template not found. ' . $template_path );
 		}
 
-		$data = file_get_contents( $template_path );
-		$uploaded_template_path = $upload_dir . '/ogp-url.html';
-
-		$is_created = file_put_contents( $uploaded_template_path, $data );
-		if ( ! $is_created ) {
-			throw new Exception( 'Test template can\'t be created. ' . $uploaded_template_path );
-		}
-
-		return $uploaded_template_path;
+		return 'https://rawgit.com/inc2734/wp-oembed-blog-card/master/tests/templates/' . $file_name;
 	}
 }

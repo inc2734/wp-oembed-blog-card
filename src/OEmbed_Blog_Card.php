@@ -25,8 +25,6 @@ class OEmbed_Blog_Card {
 		$regex = '@^(?!.*(' . join( '|', $whitelist ) . ')).*$@i';
 		wp_embed_register_handler( 'wp_oembed_blog_card', $regex, array( $this, '_wp_embed_handler' ) );
 
-		add_shortcode( 'wp_oembed_blog_card', [ $this, '_shortcode' ] );
-
 		add_action( 'wp_ajax_wp_oembed_blog_card_render', [ $this, '_wp_oembed_blog_card_render' ] );
 		add_action( 'wp_ajax_nopriv_wp_oembed_blog_card_render', [ $this, '_wp_oembed_blog_card_render' ] );
 		add_action( 'wp_enqueue_scripts', [ $this, '_enqueue_scripts' ] );
@@ -60,21 +58,11 @@ class OEmbed_Blog_Card {
 			set_transient( $this->_get_meta_key( $url ), $cache, YEAR_IN_SECONDS );
 		}
 
-		return sprintf( '[wp_oembed_blog_card url="%1$s"]', $url );
-	}
-
-	/**
-	 * Register shortcode
-	 *
-	 * @param array $atts
-	 * @return string
-	 */
-	public function _shortcode( $atts ) {
-		$atts = shortcode_atts( [
-			'url' => '',
-		], $atts, 'wp_oembed_blog_card' );
-
-		return $this->_strip_newlines( $this->_get_default_template( $atts['url'] ) );
+		if ( ! is_admin() ) {
+			return $this->_strip_newlines( $this->_get_default_template( $url ) );
+		} else {
+			return $this->_strip_newlines( $this->_get_template( $url ) );
+		}
 	}
 
 	/**

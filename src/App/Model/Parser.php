@@ -77,24 +77,30 @@ class Parser {
 	protected $thumbnail;
 
 	/**
+	 * User Agent
+	 *
+	 * @var string
+	 */
+	protected $user_agent;
+
+	/**
 	 * @param string $url
 	 */
 	public function __construct( $url ) {
 		$this->url = $url;
 
 		if ( empty( $_SERVER['HTTP_USER_AGENT'] ) ) {
-			$user_agent = apply_filters( 'http_headers_useragent', 'WordPress/' . get_bloginfo( 'version' ) . '; ' . get_bloginfo( 'url' ) );
+			$this->user_agent = apply_filters( 'http_headers_useragent', 'WordPress/' . get_bloginfo( 'version' ) . '; ' . get_bloginfo( 'url' ) );
 		} else {
-			$user_agent = $_SERVER['HTTP_USER_AGENT'];
+			$this->user_agent = $_SERVER['HTTP_USER_AGENT'];
 		}
 
-		$response = wp_remote_get( $this->url, [
-			'timeout'    => 10,
-			'user-agent' => $user_agent,
-		] );
-		$content = $this->_get_content( $response );
+		$response = $this->_request( $this->url );
+		if ( is_wp_error( $response ) ) {
+			return;
+		}
 
-		$this->status_code = $this->_get_status_code( $response, $content );
+		$this->status_code = $this->_get_status_code( $response );
 		if ( 200 != $this->get_status_code() && 304 != $this->get_status_code() ) {
 			return;
 		}
@@ -108,6 +114,8 @@ class Parser {
 			return;
 		}
 
+		$content = $this->_get_content( $response );
+
 		$this->title       = $this->_get_title( $content );
 		$this->permalink   = $this->_get_permalink( $content );
 		$this->description = $this->_get_description( $content );
@@ -117,16 +125,24 @@ class Parser {
 	}
 
 	/**
+	 * Request
+	 *
+	 * @param string $url
+	 * @return WP_Error|array
+	 */
+	protected function _request( $url ) {
+		return wp_remote_get( $url, [
+			'timeout'    => 10,
+			'user-agent' => $this->user_agent,
+		] );
+	}
+
+	/**
 	 * @param array $response
 	 * @return string
 	 */
 	protected function _get_content( $response ) {
-		if ( wp_http_validate_url( $this->url ) ) {
-			$content = wp_remote_retrieve_body( $response );
-		} elseif ( WP_Filesystem() ) {
-			global $wp_filesystem;
-			$content = $wp_filesystem->get_contents( $this->url );
-		}
+		$content = wp_remote_retrieve_body( $response );
 
 		if ( empty( $content ) ) {
 			return;
@@ -139,15 +155,10 @@ class Parser {
 	 * Return status code of the page you want to blog card
 	 *
 	 * @param array $response
-	 * @param string $content
 	 * @return string
 	 */
-	protected function _get_status_code( $response, $content ) {
+	protected function _get_status_code( $response ) {
 		$status_code = wp_remote_retrieve_response_code( $response );
-
-		if ( $content && ! $status_code ) {
-			$status_code = 200;
-		}
 
 		if ( ! $status_code ) {
 			$status_code = 404;
@@ -266,8 +277,12 @@ class Parser {
 			$favicon = preg_replace( '|^http:|', 'https:', $favicon );
 		}
 
-		$response    = wp_remote_get( $favicon );
-		$status_code = $this->_get_status_code( $response, $this->_get_content( $response ) );
+		$response = $this->_request( $favicon );
+		if ( is_wp_error( $response ) ) {
+			return;
+		}
+
+		$status_code = $this->_get_status_code( $response );
 
 		if ( 200 != $status_code && 304 != $status_code ) {
 			return;
@@ -294,8 +309,12 @@ class Parser {
 			$thumbnail = preg_replace( '|^http:|', 'https:', $thumbnail );
 		}
 
-		$response    = wp_remote_get( $thumbnail );
-		$status_code = $this->_get_status_code( $response, $this->_get_content( $response ) );
+		$response = $this->_request( $thumbnail );
+		if ( is_wp_error( $response ) ) {
+			return;
+		}
+
+		$status_code = $this->_get_status_code( $response );
 
 		if ( 200 != $status_code && 304 != $status_code ) {
 			return;
