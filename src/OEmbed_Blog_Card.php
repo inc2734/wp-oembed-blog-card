@@ -25,10 +25,11 @@ class OEmbed_Blog_Card {
 		$regex = '@^(?!.*(' . join( '|', $whitelist ) . ')).*$@i';
 		wp_embed_register_handler( 'wp_oembed_blog_card', $regex, array( $this, '_wp_embed_handler' ) );
 
-		add_action( 'save_post', array( $this, '_save_post' ) );
-		if ( has_filter( 'the_content', 'wpautop' ) ) {
-			add_filter( 'the_content', array( $this, '_fix_wpautop' ) );
-		}
+		add_shortcode( 'wp_oembed_blog_card', [ $this, '_shortcode' ] );
+
+		add_action( 'wp_ajax_wp_oembed_blog_card_render', [ $this, '_wp_oembed_blog_card_render' ] );
+		add_action( 'wp_ajax_nopriv_wp_oembed_blog_card_render', [ $this, '_wp_oembed_blog_card_render' ] );
+		add_action( 'wp_enqueue_scripts', [ $this, '_enqueue_scripts' ] );
 	}
 
 	/**
@@ -41,45 +42,64 @@ class OEmbed_Blog_Card {
 	 * @return string
 	 */
 	public function _wp_embed_handler( $matches, $attr, $url, $rawattr ) {
-		return $this->_strip_newlines( $this->_get_template( $url ) );
+		$cache = get_transient( $this->_get_meta_key( $url ) );
+		if ( ! $cache || ! is_array( $cache ) ) {
+			$cache = array();
+		}
+
+		if ( ! $cache || is_admin() ) {
+			$parser = new Parser( $url );
+
+			$cache['permalink']   = $parser->get_permalink();
+			$cache['thumbnail']   = $parser->get_thumbnail();
+			$cache['title']       = $parser->get_title();
+			$cache['description'] = $parser->get_description();
+			$cache['favicon']     = $parser->get_favicon();
+			$cache['domain']      = $parser->get_domain();
+
+			set_transient( $this->_get_meta_key( $url ), $cache, YEAR_IN_SECONDS );
+		}
+
+		return sprintf( '[wp_oembed_blog_card url="%1$s"]', $url );
 	}
 
 	/**
-	 * Fix wpautop()
+	 * Register shortcode
 	 *
-	 * @param string $content
+	 * @param array $atts
 	 * @return string
 	 */
-	public function _fix_wpautop( $content ) {
-		$content = preg_replace(
-			'@(<div class="wp-oembed-blog-card"><a href=".+?" target=".+?">)</p>@',
-			'$1',
-			$content
-		);
+	public function _shortcode( $atts ) {
+		$atts = shortcode_atts( [
+			'url' => '',
+		], $atts, 'wp_oembed_blog_card' );
 
-		$content = preg_replace(
-			'@(<div class="wp-oembed-blog-card__domain">.+?</div>\s*?)<p>(</a></div>)@',
-			'$1$2',
-			$content
-		);
-
-		return $content;
+		return $this->_strip_newlines( $this->_get_default_template( $atts['url'] ) );
 	}
 
 	/**
-	 * Remove blog card cache when post saving
+	 * Render default template used by shortcode
 	 *
-	 * @param int $post_id
-	 * @return void
+	 * @param string $url
+	 * @return string
 	 */
-	public function _save_post( $post_id ) {
-		$custom    = get_post_custom( $post_id );
-		$meta_keys = array_keys( $custom );
-		foreach ( $meta_keys as $meta_key ) {
-			if ( preg_match( '/^_wp_oembed_blog_card_/', $meta_key ) ) {
-				delete_post_meta( $post_id, $meta_key );
-			}
+	protected function _get_default_template( $url ) {
+		if ( ! $url ) {
+			return;
 		}
+
+		if ( 0 === strpos( $url, home_url() ) ) {
+			$target = '_self';
+		} else {
+			$target = '_blank';
+		}
+		return sprintf(
+			'<p class="js-wp-oembed-blog-card">
+				<a class="js-wp-oembed-blog-card__link" href="%1$s" target="%2$s">%1$s</a>
+			</p>',
+			esc_url( $url ),
+			esc_attr( $target )
+		);
 	}
 
 	/**
@@ -89,38 +109,11 @@ class OEmbed_Blog_Card {
 	 * @return string
 	 */
 	protected function _get_template( $url ) {
-		global $post;
-
-		if ( ! isset( $post->ID ) ) {
-			return;
-		}
-
 		if ( ! $url ) {
 			return;
 		}
 
-		$cache = get_post_meta( $post->ID, $this->_get_meta_key( $url ), true );
-		if ( ! $cache || ! is_array( $cache ) ) {
-			$cache = array();
-		}
-
-		if ( ! $cache ) {
-			$parser = new Parser( $url );
-
-			$cache['permalink']   = $parser->get_permalink();
-			$cache['thumbnail']   = $parser->get_thumbnail();
-			$cache['title']       = $parser->get_title();
-			$cache['description'] = $parser->get_description();
-			$cache['favicon']     = $parser->get_favicon();
-			$cache['domain']      = $parser->get_domain();
-			$cache['limit']       = time() + 60 * 60 * 24;
-
-			update_post_meta( $post->ID, $this->_get_meta_key( $url ), $cache );
-		} else {
-			if ( empty( $cache['limit'] ) || $cache['limit'] < time() ) {
-				delete_post_meta( $post->ID, $this->_get_meta_key( $url ) );
-			}
-		}
+		$cache = get_transient( $this->_get_meta_key( $url ) );
 
 		if ( $cache['title'] ) {
 			return $this->_get_blog_card_template( $cache );
@@ -136,13 +129,12 @@ class OEmbed_Blog_Card {
 	 * @return string
 	 */
 	protected function _get_url_template( $url ) {
-		return sprintf( '<a href="%1$s" target="_blank">%1$s</a>', $url );
+		return sprintf( '<p><a href="%1$s" target="_blank">%1$s</a></p>', $url );
 	}
 
 	/**
 	 * Return blog card template
 	 *
-	 * @param array $cache
 	 * @return string
 	 */
 	protected function _get_blog_card_template( $cache ) {
@@ -185,6 +177,54 @@ class OEmbed_Blog_Card {
 		</div>
 		<?php
 		return ob_get_clean();
+	}
+
+	/**
+	 * Render blog card with ajax
+	 *
+	 * @SuppressWarnings(PHPMD.ExitExpression)
+	 * @return void
+	 */
+	public function _wp_oembed_blog_card_render() {
+		if ( empty( $_GET['url'] ) ) {
+			return;
+		}
+
+		header( 'Content-Type: text/html; charset=utf-8' );
+		echo wp_kses_post( $this->_strip_newlines( $this->_get_template( $_GET['url'] ) ) );
+		die();
+	}
+
+	/**
+	 * Enqueue scripts
+	 *
+	 * @return void
+	 */
+	public function _enqueue_scripts() {
+		$relative_path = '/vendor/inc2734/wp-oembed-blog-card/src/assets/js/wp-oembed-blog-card.js';
+		$src  = get_template_directory_uri() . $relative_path;
+		$path = get_template_directory() . $relative_path;
+
+		if ( ! file_exists( $path ) ) {
+			return;
+		}
+
+		wp_enqueue_script(
+			'wp-oembed-blog-card',
+			$src,
+			[ 'jquery' ],
+			filemtime( $path ),
+			true
+		);
+
+		wp_localize_script(
+			'wp-oembed-blog-card',
+			'WP_OEMBED_BLOG_CARD',
+			[
+				'endpoint' => admin_url( 'admin-ajax.php' ),
+				'action'   => 'wp_oembed_blog_card_render',
+			]
+		);
 	}
 
 	/**
