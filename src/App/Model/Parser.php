@@ -272,6 +272,7 @@ class Parser {
 		}
 
 		$favicon = $reg[1];
+		$favicon = $this->_relative_path_to_url( $favicon, $content );
 
 		if ( is_ssl() ) {
 			$favicon = preg_replace( '|^http:|', 'https:', $favicon );
@@ -304,6 +305,7 @@ class Parser {
 		}
 
 		$thumbnail = $reg[1];
+		$thumbnail = $this->_relative_path_to_url( $thumbnail, $content );
 
 		if ( is_ssl() ) {
 			$thumbnail = preg_replace( '|^http:|', 'https:', $thumbnail );
@@ -345,6 +347,31 @@ class Parser {
 		}
 
 		return mb_convert_encoding( $content, get_bloginfo( 'charset' ), $from_encode );
+	}
+
+	/**
+	 * Return url that converted from relative path
+	 *
+	 * @param string $path
+	 * @param string $content
+	 * @return string
+	 */
+	protected function _relative_path_to_url( $path, $content ) {
+		if ( wp_http_validate_url( $path ) ) {
+			return $path;
+		}
+
+		$permalink = $this->get_permalink();
+		if ( ! $permalink ) {
+			$permalink = $this->_get_permalink( $content );
+		}
+
+		preg_match( '/(https?:\/\/[^\/]+)/', $permalink, $reg );
+		if ( empty( $reg[0] ) ) {
+			return false;
+		}
+
+		return trailingslashit( $reg[0] ) . $path;
 	}
 
 	/**

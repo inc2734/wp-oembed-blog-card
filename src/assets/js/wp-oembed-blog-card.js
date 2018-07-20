@@ -7,7 +7,7 @@ jQuery(function($) {
       url: card.find('.js-wp-oembed-blog-card__link').attr('href')
     }, function(response) {
       if (response) {
-        card.html(response);
+        card.replaceWith(response);
       }
     });
   });

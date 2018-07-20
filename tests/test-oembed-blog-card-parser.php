@@ -78,11 +78,11 @@ class OEmbed_Blog_Card_Parser_Test extends WP_UnitTestCase {
 	public function get_favicon() {
 		$uploaded_template_path = $this->_create_page( 'icon.html' );
 		$Parser = new Inc2734\WP_OEmbed_Blog_Card\App\Model\Parser( $uploaded_template_path );
-		$this->assertEquals( 'favicon.ico', $Parser->get_favicon() );
+		$this->assertEquals( 'https://rawgit.com/favicon.ico', $Parser->get_favicon() );
 
 		$uploaded_template_path = $this->_create_page( 'shortcut-icon.html' );
 		$Parser = new Inc2734\WP_OEmbed_Blog_Card\App\Model\Parser( $uploaded_template_path );
-		$this->assertEquals( 'favicon.ico', $Parser->get_favicon() );
+		$this->assertEquals( 'https://rawgit.com/favicon.ico', $Parser->get_favicon() );
 	}
 
 	/**

@@ -82,9 +82,9 @@ class OEmbed_Blog_Card {
 			$target = '_blank';
 		}
 		return sprintf(
-			'<p class="js-wp-oembed-blog-card">
+			'<div class="js-wp-oembed-blog-card">
 				<a class="js-wp-oembed-blog-card__link" href="%1$s" target="%2$s">%1$s</a>
-			</p>',
+			</div>',
 			esc_url( $url ),
 			esc_attr( $target )
 		);
