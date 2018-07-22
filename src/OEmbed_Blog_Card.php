@@ -42,8 +42,10 @@ class OEmbed_Blog_Card {
 	public function _wp_embed_handler( $matches, $attr, $url, $rawattr ) {
 		$cache = get_transient( $this->_get_meta_key( $url ) );
 		if ( ! $cache || ! is_array( $cache ) ) {
-			$cache = array();
+			$cache = [];
 		}
+
+		$this->_delete_cache_infrequently( $cache, $url );
 
 		if ( ! $cache || is_admin() ) {
 			$parser = new Parser( $url );
@@ -55,7 +57,13 @@ class OEmbed_Blog_Card {
 			$cache['favicon']     = $parser->get_favicon();
 			$cache['domain']      = $parser->get_domain();
 
-			set_transient( $this->_get_meta_key( $url ), $cache, YEAR_IN_SECONDS );
+			if ( empty( $cache['title'] ) ) {
+				$expiration = HOUR_IN_SECONDS;
+			} else {
+				$expiration = YEAR_IN_SECONDS;
+			}
+
+			set_transient( $this->_get_meta_key( $url ), $cache, $expiration );
 		}
 
 		if ( ! is_admin() ) {
@@ -218,11 +226,26 @@ class OEmbed_Blog_Card {
 	/**
 	 * Get post meta key for blog card
 	 *
+	 * @see https://qiita.com/koriym/items/efc1c419e4b7772b65c0
 	 * @param string $url
 	 * @return string
 	 */
 	protected function _get_meta_key( $url ) {
-		return '_wp_oembed_blog_card_' . urlencode( $url );
+		$hash = base64_encode( pack( 'H*', sha1( $url ) ) );
+		return '_wpoembc_' . $hash;
+	}
+
+	/**
+	 * Delete cache infrequently
+	 *
+	 * @param array $cache
+	 * @param string $url
+	 * @return void
+	 */
+	protected function _delete_cache_infrequently( $cache, $url ) {
+		if ( $cache && empty( $cache['title'] ) && 3 < rand( 1, 10 ) ) {
+			delete_transient( $this->_get_meta_key( $url ) );
+		}
 	}
 
 	/**
