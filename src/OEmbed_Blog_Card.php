@@ -187,7 +187,8 @@ class OEmbed_Blog_Card {
 		}
 
 		header( 'Content-Type: text/html; charset=utf-8' );
-		echo wp_kses_post( $this->_strip_newlines( $this->_get_template( $_GET['url'] ) ) );
+		$url = esc_url_raw( wp_unslash( $_GET['url'] ) );
+		echo wp_kses_post( $this->_strip_newlines( $this->_get_template( $url ) ) );
 		die();
 	}
 

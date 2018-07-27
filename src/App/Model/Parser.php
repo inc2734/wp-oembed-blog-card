@@ -90,10 +90,11 @@ class Parser {
 		$this->url = $url;
 
 		if ( empty( $_SERVER['HTTP_USER_AGENT'] ) ) {
-			$this->user_agent = apply_filters( 'http_headers_useragent', 'WordPress/' . get_bloginfo( 'version' ) . '; ' . get_bloginfo( 'url' ) );
+			$user_agent = 'WordPress/' . get_bloginfo( 'version' ) . '; ' . get_bloginfo( 'url' );
 		} else {
-			$this->user_agent = $_SERVER['HTTP_USER_AGENT'];
+			$user_agent = sanitize_text_field( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ) );
 		}
+		$this->user_agent = apply_filters( 'http_headers_useragent', $user_agent );
 
 		$response = $this->_request( $this->url );
 		if ( is_wp_error( $response ) ) {
