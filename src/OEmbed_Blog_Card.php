@@ -29,6 +29,14 @@ class OEmbed_Blog_Card {
 		add_action( 'wp_ajax_nopriv_wp_oembed_blog_card_render', [ $this, '_wp_oembed_blog_card_render' ] );
 		add_action( 'wp_enqueue_scripts', [ $this, '_enqueue_scripts' ] );
 		add_action( 'wp_enqueue_scripts', [ $this, '_enqueue_styles' ] );
+		add_action( 'enqueue_block_editor_assets', [ $this, '_enqueue_styles' ] );
+		add_action( 'after_setup_theme', [ $this, '_add_editor_style' ] );
+	}
+
+	public function _add_editor_style() {
+		add_editor_style( [
+			'vendor/inc2734/wp-oembed-blog-card/src/assets/css/wp-oembed-blog-card.min.css',
+		] );
 	}
 
 	/**
