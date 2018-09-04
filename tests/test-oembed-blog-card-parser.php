@@ -25,7 +25,7 @@ class OEmbed_Blog_Card_Parser_Test extends WP_UnitTestCase {
 	 */
 	public function get_content_type() {
 		$Parser = new Inc2734\WP_OEmbed_Blog_Card\App\Model\Parser( home_url( '/' ) );
-		$this->assertEquals( 'text/html', $Parser->get_content_type() );
+		$this->assertEquals( 'text/html; charset=UTF-8', $Parser->get_content_type() );
 	}
 
 	/**

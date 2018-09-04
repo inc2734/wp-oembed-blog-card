@@ -28,6 +28,7 @@ class OEmbed_Blog_Card {
 		add_action( 'wp_ajax_wp_oembed_blog_card_render', [ $this, '_wp_oembed_blog_card_render' ] );
 		add_action( 'wp_ajax_nopriv_wp_oembed_blog_card_render', [ $this, '_wp_oembed_blog_card_render' ] );
 		add_action( 'wp_enqueue_scripts', [ $this, '_enqueue_scripts' ] );
+		add_action( 'wp_enqueue_scripts', [ $this, '_enqueue_styles' ] );
 	}
 
 	/**
@@ -67,10 +68,29 @@ class OEmbed_Blog_Card {
 		}
 
 		if ( ! is_admin() ) {
-			return $this->_strip_newlines( $this->_get_default_template( $url ) );
+			$server = wp_unslash( $_SERVER );
+			if ( isset( $server['REQUEST_URI'] ) && false !== strpos( $server['REQUEST_URI'], '/wp-json/oembed/1.0/proxy?url=' ) ) {
+				return $this->_strip_newlines( $this->_get_gutenberg_template( $url ) );
+			} else {
+				return $this->_strip_newlines( $this->_get_default_template( $url ) );
+			}
 		} else {
 			return $this->_strip_newlines( $this->_get_template( $url ) );
 		}
+	}
+
+	/**
+	 * Render template for gutenberg
+	 *
+	 * @param string $url
+	 * @return string
+	 */
+	protected function _get_gutenberg_template( $url ) {
+		return sprintf(
+			'<style style="">body{padding: 5px;} %1$s</style> %2$s',
+			file_get_contents( get_template_directory() . '/vendor/inc2734/wp-oembed-blog-card/src/assets/css/wp-oembed-blog-card.min.css' ),
+			$this->_get_template( $url )
+		);
 	}
 
 	/**
@@ -198,7 +218,7 @@ class OEmbed_Blog_Card {
 	 * @return void
 	 */
 	public function _enqueue_scripts() {
-		$relative_path = '/vendor/inc2734/wp-oembed-blog-card/src/assets/js/wp-oembed-blog-card.js';
+		$relative_path = '/vendor/inc2734/wp-oembed-blog-card/src/assets/js/wp-oembed-blog-card.min.js';
 		$src  = get_template_directory_uri() . $relative_path;
 		$path = get_template_directory() . $relative_path;
 
@@ -221,6 +241,28 @@ class OEmbed_Blog_Card {
 				'endpoint' => admin_url( 'admin-ajax.php' ),
 				'action'   => 'wp_oembed_blog_card_render',
 			]
+		);
+	}
+
+	/**
+	 * Enqueue styles
+	 *
+	 * @return void
+	 */
+	public function _enqueue_styles() {
+		$relative_path = '/vendor/inc2734/wp-oembed-blog-card/src/assets/css/wp-oembed-blog-card.min.css';
+		$src  = get_template_directory_uri() . $relative_path;
+		$path = get_template_directory() . $relative_path;
+
+		if ( ! file_exists( $path ) ) {
+			return;
+		}
+
+		wp_enqueue_style(
+			'wp-oembed-blog-card',
+			$src,
+			[],
+			filemtime( $path )
 		);
 	}
 
