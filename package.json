@@ -16,14 +16,16 @@
     "postcss-cli": "^6.0.0"
   },
   "scripts": {
+    "cleanup:css": "rimraf src/assets/css",
+    "cleanup:js": "rimraf src/assets/js",
     "css:sass": "node-sass src/src/css -o src/assets/css",
     "css:postcss": "postcss src/assets/css/**/*.css -r --no-map -c=postcss.config.js",
     "minify:css": "cssnano src/assets/css/wp-oembed-blog-card.css src/assets/css/wp-oembed-blog-card.min.css --no-zindex",
-    "css": "npm-run-all -s css:sass css:postcss minify:css",
-    "js": "webpack src/src/js/wp-oembed-blog-card.js -o src/assets/js/wp-oembed-blog-card.min.js --config webpack.config.js",
+    "css": "npm-run-all -s cleanup:css css:sass css:postcss minify:css",
+    "js:build": "webpack src/src/js/wp-oembed-blog-card.js -o src/assets/js/wp-oembed-blog-card.min.js --config webpack.config.js",
+    "js": "npm-run-all -s cleanup:js js:build",
     "start": "npm run build",
     "build": "npm-run-all -p css js",
-    "postinstall": "npm run build",
-    "prepublish": "npm run build"
+    "postinstall": "npm run build"
   }
 }

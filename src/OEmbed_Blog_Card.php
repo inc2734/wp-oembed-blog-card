@@ -33,6 +33,11 @@ class OEmbed_Blog_Card {
 		add_action( 'after_setup_theme', [ $this, '_add_editor_style' ] );
 	}
 
+	/**
+	 * Add editor style
+	 *
+	 * @return void
+	 */
 	public function _add_editor_style() {
 		add_editor_style( [
 			'vendor/inc2734/wp-oembed-blog-card/src/assets/css/wp-oembed-blog-card.min.css',
