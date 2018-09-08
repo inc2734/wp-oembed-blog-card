@@ -88,11 +88,7 @@ class OEmbed_Blog_Card {
 	 * @return string
 	 */
 	protected function _get_gutenberg_template( $url ) {
-		return sprintf(
-			'<style style="">body{padding: 5px;} %1$s</style> %2$s',
-			file_get_contents( get_template_directory() . '/vendor/inc2734/wp-oembed-blog-card/src/assets/css/wp-oembed-blog-card.min.css' ),
-			$this->_get_template( $url )
-		);
+		return apply_filters( 'wp_oembed_blog_card_gutenberg_template', $this->_get_template( $url ), $url );
 	}
 
 	/**
@@ -147,7 +143,11 @@ class OEmbed_Blog_Card {
 	 * @return string
 	 */
 	protected function _get_url_template( $url ) {
-		return sprintf( '<p><a href="%1$s" target="_blank">%1$s</a></p>', $url );
+		return apply_filters(
+			'wp_oembed_blog_card_url_template',
+			sprintf( '<p><a href="%1$s" target="_blank">%1$s</a></p>', $url ),
+			$url
+		);
 	}
 
 	/**
@@ -194,7 +194,7 @@ class OEmbed_Blog_Card {
 			</a>
 		</div>
 		<?php
-		return ob_get_clean();
+		return apply_filters( 'wp_oembed_blog_card_blog_card_template', ob_get_clean(), $cache );
 	}
 
 	/**
