@@ -21,9 +21,11 @@ class Assets {
 	 * @return void
 	 */
 	public function _add_editor_style() {
-		add_editor_style( [
-			'vendor/inc2734/wp-oembed-blog-card/src/assets/css/wp-oembed-blog-card.min.css',
-		] );
+		add_editor_style(
+			[
+				'vendor/inc2734/wp-oembed-blog-card/src/assets/css/wp-oembed-blog-card.min.css',
+			]
+		);
 	}
 
 	/**

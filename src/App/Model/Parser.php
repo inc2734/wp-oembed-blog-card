@@ -132,10 +132,13 @@ class Parser {
 	 * @return WP_Error|array
 	 */
 	protected function _request( $url ) {
-		return wp_remote_get( $url, [
-			'timeout'    => 10,
-			'user-agent' => $this->user_agent,
-		] );
+		return wp_remote_get(
+			$url,
+			[
+				'timeout'    => 10,
+				'user-agent' => $this->user_agent,
+			]
+		);
 	}
 
 	/**
