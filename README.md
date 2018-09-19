@@ -16,11 +16,6 @@ $ composer require inc2734/wp-oembed-blog-card
 $Blog_Card = new Inc2734\WP_OEmbed_Blog_Card\OEmbed_Blog_Card();
 ```
 
-```
-// Using default styles (.scss)
-@import 'vendor/inc2734/wp-oembed-blog-card/src/assets/scss/wp-oembed-blog-card';
-```
-
 Then just copy and paste the URL into the article!
 
 - Data used for blog cards will be cached.
