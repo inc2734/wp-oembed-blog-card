@@ -88,7 +88,22 @@ class OEmbed_Blog_Card {
 	 * @return string
 	 */
 	protected function _get_gutenberg_template( $url ) {
-		return apply_filters( 'wp_oembed_blog_card_gutenberg_template', $this->_get_template( $url ), $url );
+		$template = $this->_get_template( $url );
+		$template = str_replace( '<a ', '<span ', $template );
+		$template = str_replace( '</a>', '</span>', $template );
+
+		// @codingStandardsIgnoreStart
+		$template .= sprintf(
+			'<link rel="stylesheet" href="%1$s">',
+			esc_url_raw( get_template_directory_uri() . '/vendor/inc2734/wp-oembed-blog-card/src/assets/css/gutenberg-embed.min.css' )
+		);
+		$template .= sprintf(
+			'<link rel="stylesheet" href="%1$s">',
+			esc_url_raw( get_template_directory_uri() . '/vendor/inc2734/wp-oembed-blog-card/src/assets/css/wp-oembed-blog-card.min.css' )
+		);
+		// @codingStandardsIgnoreEnd
+
+		return apply_filters( 'wp_oembed_blog_card_gutenberg_template', $template, $url );
 	}
 
 	/**
