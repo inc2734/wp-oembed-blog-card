@@ -48,7 +48,9 @@ class OEmbed_Blog_Card {
 			$cache = [];
 		}
 
-		$this->_delete_cache_infrequently( $cache, $url );
+		/**
+		 * $this->_delete_cache_infrequently( $cache, $url );
+		 */
 
 		if ( ! $cache || is_admin() ) {
 			$parser = new Parser( $url );
@@ -246,12 +248,14 @@ class OEmbed_Blog_Card {
 	 *
 	 * @param array $cache
 	 * @param string $url
-	 * @return void
+	 * @return boolean
 	 */
 	protected function _delete_cache_infrequently( $cache, $url ) {
-		if ( $cache && empty( $cache['title'] ) && 3 < rand( 1, 10 ) ) {
+		if ( $cache && empty( $cache['title'] ) && 2 < rand( 1, 10 ) ) {
 			delete_transient( $this->_get_meta_key( $url ) );
+			return true;
 		}
+		return false;
 	}
 
 	/**
