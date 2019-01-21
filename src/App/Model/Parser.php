@@ -7,10 +7,6 @@
 
 namespace Inc2734\WP_OEmbed_Blog_Card\App\Model;
 
-/**
- * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
- * @todo refactoring
- */
 class Parser {
 
 	/**
@@ -77,37 +73,24 @@ class Parser {
 	protected $thumbnail;
 
 	/**
-	 * User Agent
-	 *
-	 * @var string
-	 */
-	protected $user_agent;
-
-	/**
 	 * @param string $url
 	 */
 	public function __construct( $url ) {
 		$this->url = $url;
 
-		if ( empty( $_SERVER['HTTP_USER_AGENT'] ) ) {
-			$user_agent = 'WordPress/' . get_bloginfo( 'version' ) . '; ' . get_bloginfo( 'url' );
-		} else {
-			$user_agent = sanitize_text_field( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ) );
-		}
-		$this->user_agent = apply_filters( 'http_headers_useragent', $user_agent );
-
-		$response = $this->_request( $this->url );
+		$requester = new Requester( $this->url );
+		$response  = $requester->request();
 		if ( is_wp_error( $response ) ) {
 			return;
 		}
 
-		$this->status_code = $this->_get_status_code( $response );
+		$this->status_code = $requester->get_status_code();
 		if ( 200 != $this->get_status_code() && 304 != $this->get_status_code() ) {
 			return;
 		}
 
 		if ( wp_http_validate_url( $this->url ) ) {
-			$this->content_type = $this->_get_content_type( $response );
+			$this->content_type = $requester->get_content_type();
 		} else {
 			$this->content_type = mime_content_type( $this->url );
 		}
@@ -115,7 +98,7 @@ class Parser {
 			return;
 		}
 
-		$content = $this->_get_content( $response );
+		$content = $requester->get_content();
 
 		$this->title       = $this->_get_title( $content );
 		$this->permalink   = $this->_get_permalink( $content );
@@ -123,71 +106,6 @@ class Parser {
 		$this->domain      = $this->_get_domain( $content );
 		$this->favicon     = $this->_get_favicon( $content );
 		$this->thumbnail   = $this->_get_thumbnail( $content );
-	}
-
-	/**
-	 * Request
-	 *
-	 * @param string $url
-	 * @return WP_Error|array
-	 */
-	protected function _request( $url ) {
-		return wp_remote_get(
-			$url,
-			[
-				'timeout'    => 10,
-				'user-agent' => $this->user_agent,
-			]
-		);
-	}
-
-	/**
-	 * @param array $response
-	 * @return string
-	 */
-	protected function _get_content( $response ) {
-		$content = wp_remote_retrieve_body( $response );
-
-		if ( empty( $content ) ) {
-			return;
-		}
-
-		return $this->_encode( $content );
-	}
-
-	/**
-	 * Return status code of the page you want to blog card
-	 *
-	 * @param array $response
-	 * @return string
-	 */
-	protected function _get_status_code( $response ) {
-		$status_code = wp_remote_retrieve_response_code( $response );
-
-		if ( ! $status_code ) {
-			$status_code = 404;
-		}
-
-		return $status_code;
-	}
-
-	/**
-	 * Return content type of the page you want to blog card
-	 *
-	 * @param array $response
-	 * @return string
-	 */
-	protected function _get_content_type( $response ) {
-		$headers = wp_remote_retrieve_headers( $response );
-		if ( ! $headers ) {
-			return;
-		}
-
-		if ( ! is_object( $headers ) || ! method_exists( $headers, 'offsetGet' ) ) {
-			return;
-		}
-
-		return $headers->offsetGet( 'content-type' );
 	}
 
 	/**
@@ -282,13 +200,13 @@ class Parser {
 			$favicon = preg_replace( '|^http:|', 'https:', $favicon );
 		}
 
-		$response = $this->_request( $favicon );
+		$requester = new Requester( $favicon );
+		$response  = $requester->request( $favicon );
 		if ( is_wp_error( $response ) ) {
 			return;
 		}
 
-		$status_code = $this->_get_status_code( $response );
-
+		$status_code = $requester->get_status_code();
 		if ( 200 != $status_code && 304 != $status_code ) {
 			return;
 		}
@@ -315,42 +233,18 @@ class Parser {
 			$thumbnail = preg_replace( '|^http:|', 'https:', $thumbnail );
 		}
 
-		$response = $this->_request( $thumbnail );
+		$requester = new Requester( $thumbnail );
+		$response  = $requester->request( $thumbnail );
 		if ( is_wp_error( $response ) ) {
 			return;
 		}
 
-		$status_code = $this->_get_status_code( $response );
-
+		$status_code = $requester->get_status_code();
 		if ( 200 != $status_code && 304 != $status_code ) {
 			return;
 		}
 
 		return $thumbnail;
-	}
-
-	/**
-	 * @param string $content
-	 * @return string
-	 */
-	protected function _encode( $content ) {
-		if ( ! function_exists( 'mb_convert_encoding' ) || ! $content ) {
-			return $content;
-		}
-
-		foreach ( array( 'UTF-8', 'SJIS', 'EUC-JP', 'ASCII', 'JIS' ) as $encode ) {
-			$encoded_content = mb_convert_encoding( $content, $encode, $encode );
-			if ( strcmp( $content, $encoded_content ) === 0 ) {
-				$from_encode = $encode;
-				break;
-			}
-		}
-
-		if ( empty( $from_encode ) ) {
-			return $content;
-		}
-
-		return mb_convert_encoding( $content, get_bloginfo( 'charset' ), $from_encode );
 	}
 
 	/**

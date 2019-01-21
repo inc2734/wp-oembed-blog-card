@@ -13,7 +13,7 @@ $ composer require inc2734/wp-oembed-blog-card
 ```
 <?php
 // When Using composer auto loader
-$Blog_Card = new Inc2734\WP_OEmbed_Blog_Card\OEmbed_Blog_Card();
+$Blog_Card = new Inc2734\WP_OEmbed_Blog_Card\Bootstrap();
 ```
 
 Then just copy and paste the URL into the article!

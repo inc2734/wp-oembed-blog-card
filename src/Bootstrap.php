@@ -10,7 +10,7 @@ namespace Inc2734\WP_OEmbed_Blog_Card;
 use Inc2734\WP_OEmbed_Blog_Card\App\Model\Parser;
 use Inc2734\WP_OEmbed_Blog_Card\App\Setup;
 
-class OEmbed_Blog_Card {
+class Bootstrap {
 
 	public function __construct() {
 		if ( isset( $_SERVER['REMOTE_ADDR'] ) && isset( $_SERVER['SERVER_ADDR'] ) && $_SERVER['REMOTE_ADDR'] === $_SERVER['SERVER_ADDR'] ) {
