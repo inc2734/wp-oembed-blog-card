@@ -147,7 +147,7 @@ class Bootstrap {
 		$cache = get_transient( $this->_get_meta_key( $url ) );
 
 		if ( $cache['title'] ) {
-			return $this->_get_blog_card_template( $cache );
+			return $this->_get_blog_card_template( $url, $cache );
 		} else {
 			return $this->_get_url_template( $url );
 		}
@@ -170,10 +170,12 @@ class Bootstrap {
 	/**
 	 * Return blog card template
 	 *
+	 * @param string $url
+	 * @param array $cache
 	 * @return string
 	 */
-	protected function _get_blog_card_template( $cache ) {
-		if ( 0 === strpos( $cache['permalink'], home_url() ) ) {
+	protected function _get_blog_card_template( $url, $cache ) {
+		if ( 0 === strpos( $url, home_url() ) ) {
 			$target = '_self';
 		} else {
 			$target = '_blank';
@@ -182,7 +184,7 @@ class Bootstrap {
 		ob_start();
 		?>
 		<div class="wp-oembed-blog-card">
-			<a href="<?php echo esc_url( $cache['permalink'] ); ?>" target="<?php echo esc_attr( $target ); ?>">
+			<a href="<?php echo esc_url( $url ); ?>" target="<?php echo esc_attr( $target ); ?>">
 				<?php if ( $cache['thumbnail'] ) : ?>
 					<div class="wp-oembed-blog-card__figure">
 						<img src="<?php echo esc_url( $cache['thumbnail'] ); ?>" alt="">
@@ -251,7 +253,7 @@ class Bootstrap {
 	 * @return boolean
 	 */
 	protected function _delete_cache_infrequently( $cache, $url ) {
-		if ( $cache && empty( $cache['title'] ) && 2 < rand( 1, 10 ) ) {
+		if ( $cache && empty( $cache['title'] ) && 1 > rand( 1, 100 ) ) {
 			delete_transient( $this->_get_meta_key( $url ) );
 			return true;
 		}
