@@ -13,8 +13,12 @@ use Inc2734\WP_OEmbed_Blog_Card\App\Setup;
 class Bootstrap {
 
 	public function __construct() {
-		if ( isset( $_SERVER['REMOTE_ADDR'] ) && isset( $_SERVER['SERVER_ADDR'] ) && $_SERVER['REMOTE_ADDR'] === $_SERVER['SERVER_ADDR'] ) {
-			return;
+		if ( $this->_is_admin_request() ) {
+			return false;
+		}
+
+		if ( $this->_is_wordpress_request() ) {
+			return false;
 		}
 
 		$oembed    = _wp_oembed_get_object();
@@ -101,7 +105,7 @@ class Bootstrap {
 		);
 		$template .= sprintf(
 			'<link rel="stylesheet" href="%1$s">',
-			esc_url_raw( get_template_directory_uri() . '/vendor/inc2734/wp-oembed-blog-card/src/assets/css/wp-oembed-blog-card.min.css' )
+			esc_url_raw( get_template_directory_uri() . '/vendor/inc2734/wp-oembed-blog-card/src/assets/css/app.min.css' )
 		);
 		// @codingStandardsIgnoreEnd
 
@@ -268,5 +272,51 @@ class Bootstrap {
 	 */
 	protected function _strip_newlines( $string ) {
 		return str_replace( array( "\r", "\n", "\t" ), '', $string );
+	}
+
+	/**
+	 * Return true when requested from WordPress
+	 *
+	 * @return boolean
+	 */
+	protected function _is_wordpress_request() {
+		if ( ! isset( $_SERVER['HTTP_USER_AGENT'] ) ) {
+			return false;
+		}
+
+		$user_agent = wp_unslash( $_SERVER['HTTP_USER_AGENT'] ); // WPCS: sanitization ok.
+
+		return 0 === strpos( $user_agent, 'WordPress' );
+	}
+
+	/**
+	 * Return true when requested from admin-ajax.php, wp-cron.php, wp-json
+	 *
+	 * @return boolean
+	 */
+	protected function _is_admin_request() {
+		if ( ! isset( $_SERVER['REQUEST_URI'] ) ) {
+			return false;
+		}
+
+		$request_uri = wp_unslash( $_SERVER['REQUEST_URI'] ); // WPCS: sanitization ok.
+
+		if ( false !== strpos( $request_uri, '/wp-admin/admin-ajax.php' ) ) {
+			if ( false === strpos( $request_uri, 'action=wp_oembed_blog_card_render' ) ) {
+				return true;
+			}
+		}
+
+		if ( false !== strpos( $request_uri, '/wp-cron.php' ) ) {
+			return true;
+		}
+
+		if ( false !== strpos( $request_uri, '/wp-json/' ) ) {
+			if ( false === strpos( $request_uri, '/wp-json/oembed/' ) ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 }

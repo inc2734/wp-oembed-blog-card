@@ -23,7 +23,7 @@ class Assets {
 	public function _add_editor_style() {
 		add_editor_style(
 			[
-				'vendor/inc2734/wp-oembed-blog-card/src/assets/css/wp-oembed-blog-card.min.css',
+				'vendor/inc2734/wp-oembed-blog-card/src/assets/css/app.min.css',
 			]
 		);
 	}
@@ -34,19 +34,12 @@ class Assets {
 	 * @return void
 	 */
 	public function _enqueue_scripts() {
-		$relative_path = '/vendor/inc2734/wp-oembed-blog-card/src/assets/js/wp-oembed-blog-card.min.js';
-		$src  = get_template_directory_uri() . $relative_path;
-		$path = get_template_directory() . $relative_path;
-
-		if ( ! file_exists( $path ) ) {
-			return;
-		}
-
+		$relative_path = '/vendor/inc2734/wp-oembed-blog-card/src/assets/js/app.min.js';
 		wp_enqueue_script(
 			'wp-oembed-blog-card',
-			$src,
-			[ 'jquery' ],
-			filemtime( $path ),
+			get_template_directory_uri() . $relative_path,
+			[],
+			filemtime( get_template_directory() . $relative_path ),
 			true
 		);
 
@@ -66,19 +59,12 @@ class Assets {
 	 * @return void
 	 */
 	public function _enqueue_styles() {
-		$relative_path = '/vendor/inc2734/wp-oembed-blog-card/src/assets/css/wp-oembed-blog-card.min.css';
-		$src  = get_template_directory_uri() . $relative_path;
-		$path = get_template_directory() . $relative_path;
-
-		if ( ! file_exists( $path ) ) {
-			return;
-		}
-
+		$relative_path = '/vendor/inc2734/wp-oembed-blog-card/src/assets/css/app.min.css';
 		wp_enqueue_style(
 			'wp-oembed-blog-card',
-			$src,
+			get_template_directory_uri() . $relative_path,
 			[],
-			filemtime( $path )
+			filemtime( get_template_directory() . $relative_path )
 		);
 	}
 }

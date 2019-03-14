@@ -40,7 +40,7 @@ class Gutenberg {
 			return $response;
 		}
 
-		$provider_name = __( 'wp-oembed-blog-card handler', 'wp-oembed-blog-card' );
+		$provider_name = 'wp-oembed-blog-card handler';
 
 		if ( isset( $response->provider_name ) && $provider_name === $response->provider_name ) {
 			return $response;
@@ -52,9 +52,9 @@ class Gutenberg {
 			return $response;
 		}
 
-		return array(
+		return [
 			'provider_name' => $provider_name,
 			'html'          => $html,
-		);
+		];
 	}
 }

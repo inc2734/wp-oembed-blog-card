@@ -36,11 +36,15 @@ class Requester {
 	public function __construct( $url ) {
 		$this->url = $url;
 
-		if ( empty( $_SERVER['HTTP_USER_AGENT'] ) ) {
+		$remote_addr = isset( $_SERVER['REMOTE_ADDR'] ) ? wp_unslash( $_SERVER['REMOTE_ADDR'] ) : null; // WPCS: sanitization ok.
+		$server_addr = isset( $_SERVER['SERVER_ADDR'] ) ? wp_unslash( $_SERVER['SERVER_ADDR'] ) : null; // WPCS: sanitization ok.
+
+		if ( empty( $_SERVER['HTTP_USER_AGENT'] ) || $remote_addr === $server_addr ) {
 			$user_agent = 'WordPress/' . get_bloginfo( 'version' ) . '; ' . get_bloginfo( 'url' );
 		} else {
 			$user_agent = sanitize_text_field( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ) );
 		}
+
 		$this->user_agent = apply_filters( 'http_headers_useragent', $user_agent );
 	}
 
@@ -50,6 +54,13 @@ class Requester {
 	 * @return WP_Error|array
 	 */
 	public function request() {
+		if ( 0 === strpos( $this->url, 'http://127.0.0.1:' ) || 0 === strpos( $this->url, 'http://localhost:' ) ) {
+			return new \WP_Error(
+				'http_request_failed',
+				__( 'Requests for local URLs are not supported.', 'inc2734-wp-oembed-blog-card' )
+			);
+		}
+
 		$this->response = wp_remote_get(
 			$this->url,
 			[
