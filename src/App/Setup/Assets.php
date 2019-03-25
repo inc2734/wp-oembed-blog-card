@@ -7,12 +7,16 @@
 
 namespace Inc2734\WP_OEmbed_Blog_Card\App\Setup;
 
+use Inc2734\WP_OEmbed_Blog_Card\App\View\View;
+
 class Assets {
 	public function __construct() {
 		add_action( 'wp_enqueue_scripts', [ $this, '_enqueue_scripts' ] );
 		add_action( 'wp_enqueue_scripts', [ $this, '_enqueue_styles' ] );
 		add_action( 'enqueue_block_editor_assets', [ $this, '_enqueue_styles' ] );
 		add_action( 'after_setup_theme', [ $this, '_add_editor_style' ] );
+		add_action( 'wp_ajax_wp_oembed_blog_card_render', [ $this, '_wp_oembed_blog_card_render' ] );
+		add_action( 'wp_ajax_nopriv_wp_oembed_blog_card_render', [ $this, '_wp_oembed_blog_card_render' ] );
 	}
 
 	/**
@@ -66,5 +70,23 @@ class Assets {
 			[],
 			filemtime( get_template_directory() . $relative_path )
 		);
+	}
+
+	/**
+	 * Render blog card with ajax
+	 *
+	 * @SuppressWarnings(PHPMD.ExitExpression)
+	 *
+	 * @return void
+	 */
+	public function _wp_oembed_blog_card_render() {
+		if ( empty( $_GET['url'] ) ) {
+			return;
+		}
+
+		header( 'Content-Type: text/html; charset=utf-8' );
+		$url = esc_url_raw( wp_unslash( $_GET['url'] ) );
+		echo wp_kses_post( View::get_template( $url ) );
+		die();
 	}
 }

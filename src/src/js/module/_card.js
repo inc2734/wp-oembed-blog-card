@@ -15,7 +15,7 @@ export class Card {
     xhr.onreadystatechange = () => {
       if (4 === xhr.readyState) {
         if (200 === xhr.status || 304 === xhr.status) {
-          card.innerHTML = xhr.responseText;
+          card.outerHTML = xhr.responseText;
         } else {
           console.log(`Blog card request failed. HttpStatus: ${xhr.statusText}`);
         }

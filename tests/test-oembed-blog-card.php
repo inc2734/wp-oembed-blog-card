@@ -12,9 +12,24 @@ class OEmbed_Blog_Card_Test extends WP_UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function _wp_embed_handler() {
-		$Blog_Card = new Inc2734\WP_OEmbed_Blog_Card\Bootstrap();
-		$template  = $Blog_Card->_wp_embed_handler( 'https://2inc.org', null, null, null );
-		$this->assertSame( 0, preg_match( "/[\r\n]/", $template ) );
+	public function wordpress_site_link() {
+		new Inc2734\WP_OEmbed_Blog_Card\Bootstrap();
+
+		$this->assertEquals(
+			'<div class="js-wp-oembed-blog-card"><a class="js-wp-oembed-blog-card__link" href="https://2inc.org" target="_blank">https://2inc.org</a></div>',
+			trim( apply_filters( 'the_content', '[embed]https://2inc.org[/embed]' ) )
+		);
+	}
+
+	/**
+	 * @test
+	 */
+	public function youtube_link() {
+		new Inc2734\WP_OEmbed_Blog_Card\Bootstrap();
+
+		$this->assertEquals(
+			'<p><iframe width="500" height="281" src="https://www.youtube.com/embed/X2vhH4slaJA?feature=oembed" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></p>',
+			trim( apply_filters( 'the_content', '[embed]https://www.youtube.com/watch?v=X2vhH4slaJA[/embed]' ) )
+		);
 	}
 }

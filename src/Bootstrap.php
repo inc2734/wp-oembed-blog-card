@@ -7,7 +7,8 @@
 
 namespace Inc2734\WP_OEmbed_Blog_Card;
 
-use Inc2734\WP_OEmbed_Blog_Card\App\Model\Parser;
+use Inc2734\WP_OEmbed_Blog_Card\App\Model\Cache;
+use Inc2734\WP_OEmbed_Blog_Card\App\View\View;
 use Inc2734\WP_OEmbed_Blog_Card\App\Setup;
 
 class Bootstrap {
@@ -21,257 +22,116 @@ class Bootstrap {
 			return false;
 		}
 
-		$oembed    = _wp_oembed_get_object();
-		$whitelist = array_keys( $oembed->providers );
-		foreach ( $whitelist as $key => $value ) {
-			$value = preg_replace( '@^#(.+)#i$@', '$1', $value );
-			$whitelist[ $key ] = $value;
-		}
-		$regex = '@^(?!.*(' . join( '|', $whitelist ) . ')).*$@i';
-		wp_embed_register_handler( 'wp_oembed_blog_card', $regex, array( $this, '_wp_embed_handler' ) );
+		add_filter( 'embed_oembed_html', [ $this, '_embed_html_for_wordpress' ], 9, 2 );
+		add_filter( 'embed_maybe_make_link', [ $this, '_embed_html_for_no_oembed' ], 9, 2 );
 
-		add_action( 'wp_ajax_wp_oembed_blog_card_render', [ $this, '_wp_oembed_blog_card_render' ] );
-		add_action( 'wp_ajax_nopriv_wp_oembed_blog_card_render', [ $this, '_wp_oembed_blog_card_render' ] );
-
-		new Setup\Assets();
-		new Setup\Gutenberg();
-	}
-
-	/**
-	 * Embed handler for blog card
-	 *
-	 * @param array $matches
-	 * @param array $attr
-	 * @param string $url
-	 * @param string $rawattr
-	 * @return string
-	 */
-	public function _wp_embed_handler( $matches, $attr, $url, $rawattr ) {
-		$cache = get_transient( $this->_get_meta_key( $url ) );
-		if ( ! $cache || ! is_array( $cache ) ) {
-			$cache = [];
-		}
-
-		/**
-		 * $this->_delete_cache_infrequently( $cache, $url );
-		 */
-
-		if ( ! $cache || is_admin() ) {
-			$parser = new Parser( $url );
-
-			$cache['permalink']   = $parser->get_permalink();
-			$cache['thumbnail']   = $parser->get_thumbnail();
-			$cache['title']       = $parser->get_title();
-			$cache['description'] = $parser->get_description();
-			$cache['favicon']     = $parser->get_favicon();
-			$cache['domain']      = $parser->get_domain();
-
-			if ( empty( $cache['title'] ) ) {
-				$expiration = HOUR_IN_SECONDS;
-			} else {
-				$expiration = YEAR_IN_SECONDS;
-			}
-
-			set_transient( $this->_get_meta_key( $url ), $cache, $expiration );
-		}
-
-		if ( ! is_admin() ) {
-			$server = wp_unslash( $_SERVER );
-			if ( isset( $server['REQUEST_URI'] ) && false !== strpos( $server['REQUEST_URI'], '/wp-json/oembed/1.0/proxy?url=' ) ) {
-				return $this->_strip_newlines( $this->_get_gutenberg_template( $url ) );
-			} else {
-				return $this->_strip_newlines( $this->_get_default_template( $url ) );
-			}
+		if ( $this->_is_block_embed_rendering_request() ) {
+			add_filter( 'rest_request_after_callbacks', [ $this, '_block_filter_oembed_result' ], 11, 3 );
 		} else {
-			return $this->_strip_newlines( $this->_get_template( $url ) );
+			new Setup\Assets();
 		}
 	}
 
 	/**
-	 * Render template for gutenberg
+	 * Return embed html for WordPress oEmbed
 	 *
+	 * @param string $cache
 	 * @param string $url
 	 * @return string
 	 */
-	protected function _get_gutenberg_template( $url ) {
-		$template = $this->_get_template( $url );
-		$template = str_replace( '<a ', '<span ', $template );
-		$template = str_replace( '</a>', '</span>', $template );
+	public function _embed_html_for_wordpress( $cache, $url ) {
+		if ( 0 !== strpos( $cache, '<blockquote class="wp-embedded-content"' ) ) {
+			return $cache;
+		}
 
-		// @codingStandardsIgnoreStart
-		$template .= sprintf(
-			'<link rel="stylesheet" href="%1$s">',
-			esc_url_raw( get_template_directory_uri() . '/vendor/inc2734/wp-oembed-blog-card/src/assets/css/gutenberg-embed.min.css' )
-		);
-		$template .= sprintf(
-			'<link rel="stylesheet" href="%1$s">',
-			esc_url_raw( get_template_directory_uri() . '/vendor/inc2734/wp-oembed-blog-card/src/assets/css/app.min.css' )
-		);
-		// @codingStandardsIgnoreEnd
-
-		return apply_filters( 'wp_oembed_blog_card_gutenberg_template', $template, $url );
+		return $this->_render( $url );
 	}
 
 	/**
-	 * Render default template used by shortcode
+	 * Return embed HTML for non oEmbed link
 	 *
+	 * @param string $output
 	 * @param string $url
 	 * @return string
 	 */
-	protected function _get_default_template( $url ) {
-		if ( ! $url ) {
-			return;
-		}
-
-		if ( 0 === strpos( $url, home_url() ) ) {
-			$target = '_self';
-		} else {
-			$target = '_blank';
-		}
-		return sprintf(
-			'<div class="js-wp-oembed-blog-card">
-				<a class="js-wp-oembed-blog-card__link" href="%1$s" target="%2$s">%1$s</a>
-			</div>',
-			esc_url( $url ),
-			esc_attr( $target )
-		);
+	public function _embed_html_for_no_oembed( $output, $url ) {
+		return $this->_render( $url );
 	}
 
 	/**
-	 * Return blog card template
+	 * Make sure oEmbed REST Requests apply the WP Embed security mechanism for WordPress embeds.
+	 *
+	 * @see  https://core.trac.wordpress.org/ticket/32522
+	 * @see  https://github.com/WordPress/gutenberg/blob/master/lib/rest-api.php
+	 * @copyright  https://github.com/WordPress/gutenberg
+	 *
+	 * @param  WP_HTTP_Response|WP_Error $response The REST Request response.
+	 * @param  WP_REST_Server            $handler  ResponseHandler instance (usually WP_REST_Server).
+	 * @param  WP_REST_Request           $request  Request used to generate the response.
+	 * @return WP_HTTP_Response|object|WP_Error    The REST Request response.
+	 */
+	public function _block_filter_oembed_result( $response, $handler, $request ) {
+		if ( 'GET' !== $request->get_method() ) {
+			return $response;
+		}
+
+		if ( is_wp_error( $response ) && 'oembed_invalid_url' !== $response->get_error_code() ) {
+			return $response;
+		}
+
+		if ( '/oembed/1.0/proxy' !== $request->get_route() ) {
+			return $response;
+		}
+
+		$provider_name = 'wp-oembed-blog-card handler';
+
+		if ( isset( $response->provider_name ) && $response->provider_name === $provider_name ) {
+			return $response;
+		}
+
+		global $wp_embed;
+		$html = $wp_embed->shortcode( [], $request->get_param( 'url' ) );
+		if ( ! $html ) {
+			return $response;
+		}
+
+		return [
+			'provider_name' => $provider_name,
+			'html'          => $html,
+		];
+	}
+
+	/**
+	 * Refresh cache if the cache is expired or is_admin
 	 *
 	 * @param string $url
-	 * @return string
-	 */
-	protected function _get_template( $url ) {
-		if ( ! $url ) {
-			return;
-		}
-
-		$cache = get_transient( $this->_get_meta_key( $url ) );
-
-		if ( $cache['title'] ) {
-			return $this->_get_blog_card_template( $url, $cache );
-		} else {
-			return $this->_get_url_template( $url );
-		}
-	}
-
-	/**
-	 * Return url template
-	 *
-	 * @param string $url
-	 * @return string
-	 */
-	protected function _get_url_template( $url ) {
-		return apply_filters(
-			'wp_oembed_blog_card_url_template',
-			sprintf( '<p><a href="%1$s" target="_blank">%1$s</a></p>', $url ),
-			$url
-		);
-	}
-
-	/**
-	 * Return blog card template
-	 *
-	 * @param string $url
-	 * @param array $cache
-	 * @return string
-	 */
-	protected function _get_blog_card_template( $url, $cache ) {
-		if ( 0 === strpos( $url, home_url() ) ) {
-			$target = '_self';
-		} else {
-			$target = '_blank';
-		}
-
-		ob_start();
-		?>
-		<div class="wp-oembed-blog-card">
-			<a href="<?php echo esc_url( $url ); ?>" target="<?php echo esc_attr( $target ); ?>">
-				<?php if ( $cache['thumbnail'] ) : ?>
-					<div class="wp-oembed-blog-card__figure">
-						<img src="<?php echo esc_url( $cache['thumbnail'] ); ?>" alt="">
-					</div>
-				<?php endif; ?>
-				<div class="wp-oembed-blog-card__body">
-					<div class="wp-oembed-blog-card__title">
-						<?php echo esc_html( $cache['title'] ); ?>
-					</div>
-					<div class="wp-oembed-blog-card__description">
-						<?php
-						if ( function_exists( 'mb_strimwidth' ) ) {
-							echo esc_html( mb_strimwidth( $cache['description'], 0, 160, '…', 'utf-8' ) );
-						} else {
-							echo esc_html( $cache['description'] );
-						}
-						?>
-					</div>
-					<div class="wp-oembed-blog-card__domain">
-						<?php if ( $cache['favicon'] ) : ?>
-							<img class="wp-oembed-blog-card__favicon" src="<?php echo esc_url( $cache['favicon'] ); ?>" alt="">
-						<?php endif; ?>
-						<?php echo esc_html( $cache['domain'] ); ?>
-					</div>
-				</div>
-			</a>
-		</div>
-		<?php
-		return apply_filters( 'wp_oembed_blog_card_blog_card_template', ob_get_clean(), $cache );
-	}
-
-	/**
-	 * Render blog card with ajax
-	 *
-	 * @SuppressWarnings(PHPMD.ExitExpression)
 	 * @return void
 	 */
-	public function _wp_oembed_blog_card_render() {
-		if ( empty( $_GET['url'] ) ) {
-			return;
-		}
+	protected function _maybe_refresh_cache( $url ) {
+		$cache = Cache::get( $url );
 
-		header( 'Content-Type: text/html; charset=utf-8' );
-		$url = esc_url_raw( wp_unslash( $_GET['url'] ) );
-		echo wp_kses_post( $this->_strip_newlines( $this->_get_template( $url ) ) );
-		die();
+		if ( ! $cache ) {
+			Cache::refresh( $url );
+		}
 	}
 
 	/**
-	 * Get post meta key for blog card
+	 * Rendering bloc card on editor
 	 *
-	 * @see https://qiita.com/koriym/items/efc1c419e4b7772b65c0
 	 * @param string $url
 	 * @return string
 	 */
-	protected function _get_meta_key( $url ) {
-		$hash = base64_encode( pack( 'H*', sha1( $url ) ) );
-		return '_wpoembc_' . $hash;
-	}
-
-	/**
-	 * Delete cache infrequently
-	 *
-	 * @param array $cache
-	 * @param string $url
-	 * @return boolean
-	 */
-	protected function _delete_cache_infrequently( $cache, $url ) {
-		if ( $cache && empty( $cache['title'] ) && 1 > rand( 1, 100 ) ) {
-			delete_transient( $this->_get_meta_key( $url ) );
-			return true;
+	protected function _render( $url ) {
+		if ( ! is_admin() ) {
+			if ( $this->_is_block_embed_rendering_request() ) {
+				$this->_maybe_refresh_cache( $url );
+				return View::get_block_template( $url );
+			}
+			return View::get_pre_blog_card_template( $url );
 		}
-		return false;
-	}
 
-	/**
-	 * Remove newlines
-	 *
-	 * @param string $string
-	 * @return string
-	 */
-	protected function _strip_newlines( $string ) {
-		return str_replace( array( "\r", "\n", "\t" ), '', $string );
+		$this->_maybe_refresh_cache( $url );
+		return View::get_template( $url );
 	}
 
 	/**
@@ -302,21 +162,30 @@ class Bootstrap {
 		$request_uri = wp_unslash( $_SERVER['REQUEST_URI'] ); // WPCS: sanitization ok.
 
 		if ( false !== strpos( $request_uri, '/wp-admin/admin-ajax.php' ) ) {
-			if ( false === strpos( $request_uri, 'action=wp_oembed_blog_card_render' ) ) {
-				return true;
-			}
+			return false === strpos( $request_uri, 'action=wp_oembed_blog_card_render' );
+		}
+
+		if ( false !== strpos( $request_uri, '/wp-json/' ) ) {
+			return false === strpos( $request_uri, '/wp-json/oembed/' );
 		}
 
 		if ( false !== strpos( $request_uri, '/wp-cron.php' ) ) {
 			return true;
 		}
 
-		if ( false !== strpos( $request_uri, '/wp-json/' ) ) {
-			if ( false === strpos( $request_uri, '/wp-json/oembed/' ) ) {
-				return true;
-			}
+		return false;
+	}
+
+	/**
+	 * Return true when block embed rendering request
+	 *
+	 * @return boolean
+	 */
+	protected function _is_block_embed_rendering_request() {
+		if ( ! isset( $_SERVER['REQUEST_URI'] ) ) {
+			return false;
 		}
 
-		return false;
+		return false !== strpos( $_SERVER['REQUEST_URI'], '/wp-json/oembed/1.0/proxy?url=' );
 	}
 }
