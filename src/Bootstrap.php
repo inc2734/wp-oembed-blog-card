@@ -122,15 +122,15 @@ class Bootstrap {
 	 * @return string
 	 */
 	protected function _render( $url ) {
+		$this->_maybe_refresh_cache( $url );
+
 		if ( ! is_admin() ) {
 			if ( $this->_is_block_embed_rendering_request() ) {
-				$this->_maybe_refresh_cache( $url );
 				return View::get_block_template( $url );
 			}
 			return View::get_pre_blog_card_template( $url );
 		}
 
-		$this->_maybe_refresh_cache( $url );
 		return View::get_template( $url );
 	}
 
