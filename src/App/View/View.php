@@ -119,9 +119,11 @@ class View {
 			$target = '_blank';
 		}
 
+		$cached_time = isset( $cache['cached_time' ] ) ? date_i18n( 'd/m/y H:i:s', $cache['cached_time' ] ) : null;
+
 		ob_start();
 		?>
-		<div class="wp-oembed-blog-card">
+		<div class="wp-oembed-blog-card" data-cached-time="<?php echo esc_attr( $cached_time ); ?>">
 			<a href="<?php echo esc_url( $url ); ?>" target="<?php echo esc_attr( $target ); ?>">
 				<?php if ( $cache['thumbnail'] ) : ?>
 					<div class="wp-oembed-blog-card__figure">

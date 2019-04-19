@@ -37,6 +37,7 @@ class Cache {
 			'description' => $parser->get_description(),
 			'favicon'     => $parser->get_favicon(),
 			'domain'      => $parser->get_domain(),
+			'cached_time' => time(),
 		];
 
 		$expiration = empty( $cache['title'] ) ? HOUR_IN_SECONDS : YEAR_IN_SECONDS;

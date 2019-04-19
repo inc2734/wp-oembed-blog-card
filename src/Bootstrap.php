@@ -110,7 +110,7 @@ class Bootstrap {
 	protected function _maybe_refresh_cache( $url ) {
 		$cache = Cache::get( $url );
 
-		if ( ! $cache ) {
+		if ( ! $cache || is_admin() ) {
 			Cache::refresh( $url );
 		}
 	}
@@ -125,10 +125,9 @@ class Bootstrap {
 		$this->_maybe_refresh_cache( $url );
 
 		if ( ! is_admin() ) {
-			if ( $this->_is_block_embed_rendering_request() ) {
-				return View::get_block_template( $url );
-			}
-			return View::get_pre_blog_card_template( $url );
+			return $this->_is_block_embed_rendering_request()
+				? View::get_block_template( $url )
+				: View::get_pre_blog_card_template( $url );
 		}
 
 		return View::get_template( $url );
