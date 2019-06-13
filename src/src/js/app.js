@@ -20,7 +20,7 @@ if (typeof IntersectionObserver !== 'undefined') {
       );
     },
     {
-      rootMargin: '100px',
+      rootMargin: '200px',
     }
   );
 

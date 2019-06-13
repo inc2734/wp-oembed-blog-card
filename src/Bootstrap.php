@@ -71,22 +71,10 @@ class Bootstrap {
 	 * @return WP_HTTP_Response|object|WP_Error    The REST Request response.
 	 */
 	public function _block_filter_oembed_result( $response, $handler, $request ) {
-		if ( 'GET' !== $request->get_method() ) {
-			return $response;
-		}
-
-		if ( is_wp_error( $response ) && 'oembed_invalid_url' !== $response->get_error_code() ) {
-			return $response;
-		}
-
-		if ( '/oembed/1.0/proxy' !== $request->get_route() ) {
-			return $response;
-		}
-
-		$provider_name = 'wp-oembed-blog-card handler';
-
-		if ( isset( $response->provider_name ) && $response->provider_name === $provider_name ) {
-			return $response;
+		if ( isset( $response->html ) ) {
+			if ( 0 !== strpos( $response->html, '<blockquote class="wp-embedded-content"' ) ) {
+				return $response;
+			}
 		}
 
 		global $wp_embed;
@@ -96,7 +84,7 @@ class Bootstrap {
 		}
 
 		return [
-			'provider_name' => $provider_name,
+			'provider_name' => 'inc2734/wp-oembed-blog-card',
 			'html'          => $html,
 		];
 	}

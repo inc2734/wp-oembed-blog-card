@@ -28,7 +28,7 @@ class OEmbed_Blog_Card_Test extends WP_UnitTestCase {
 		new Inc2734\WP_OEmbed_Blog_Card\Bootstrap();
 
 		$this->assertEquals(
-			'<p><iframe width="500" height="281" src="https://www.youtube.com/embed/X2vhH4slaJA?feature=oembed" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></p>',
+			'<p><iframe title="【1-1】WP Multibyte Patch プラグインの有効化 / WordPress の推奨設定 - WordPress テーマ Snow Monkey の使い方" width="500" height="281" src="https://www.youtube.com/embed/X2vhH4slaJA?feature=oembed" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></p>',
 			trim( apply_filters( 'the_content', '[embed]https://www.youtube.com/watch?v=X2vhH4slaJA[/embed]' ) )
 		);
 	}

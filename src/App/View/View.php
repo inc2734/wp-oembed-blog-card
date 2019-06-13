@@ -54,12 +54,16 @@ class View {
 		}
 
 		return static::_strip_newlines(
-			sprintf(
-				'<div class="js-wp-oembed-blog-card">
-					<a class="js-wp-oembed-blog-card__link" href="%1$s" target="%2$s">%1$s</a>
-				</div>',
-				esc_url( $url ),
-				esc_attr( $target )
+			apply_filters(
+				'wp_oembed_blog_card_loading_template',
+				sprintf(
+					'<div class="js-wp-oembed-blog-card">
+						<a class="js-wp-oembed-blog-card__link" href="%1$s" target="%2$s">%1$s</a>
+					</div>',
+					esc_url( $url ),
+					esc_attr( $target )
+				),
+				$url
 			)
 		);
 	}
@@ -98,7 +102,7 @@ class View {
 					'<p class="wp-oembed-blog-card-url-template">
 						<a href="%1$s" target="_blank">%1$s</a>
 					</p>',
-					$url
+					esc_url( $url )
 				),
 				$url
 			)
@@ -119,7 +123,7 @@ class View {
 			$target = '_blank';
 		}
 
-		$cached_time = isset( $cache['cached_time' ] ) ? date_i18n( 'd/m/y H:i:s', $cache['cached_time' ] ) : null;
+		$cached_time = isset( $cache['cached_time'] ) ? date_i18n( 'd/m/y H:i:s', $cache['cached_time'] ) : null;
 
 		ob_start();
 		?>

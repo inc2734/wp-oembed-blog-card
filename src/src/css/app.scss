@@ -1,13 +1,21 @@
 .wp-oembed-blog-card {
-  box-shadow: 0 0 3px 0 rgba(#000, .2);
+  box-shadow: 0 0 4px 0 rgba(#000, .1);
   border-radius: 4px;
-  padding: 1em;
   overflow: hidden;
+  transition: all .2s ease-out;
+
+  @media (min-width: 1024px) {
+    &:hover, &:active, &:focus {
+      box-shadow: 0 1px 6px 0 rgba(#000, .1);
+    }
+  }
 
   > a {
     display: block;
     color: #000;
+    padding: 1em;
     text-decoration: none;
+    overflow: hidden;
   }
 
   &__figure {

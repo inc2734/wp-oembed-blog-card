@@ -1,12 +1,17 @@
 .wp-oembed-blog-card {
-  box-shadow: 0 0 3px 0 rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.1);
   border-radius: 4px;
-  padding: 1em;
-  overflow: hidden; }
+  overflow: hidden;
+  transition: all .2s ease-out; }
+  @media (min-width: 1024px) {
+    .wp-oembed-blog-card:hover, .wp-oembed-blog-card:active, .wp-oembed-blog-card:focus {
+      box-shadow: 0 1px 6px 0 rgba(0, 0, 0, 0.1); } }
   .wp-oembed-blog-card > a {
     display: block;
     color: #000;
-    text-decoration: none; }
+    padding: 1em;
+    text-decoration: none;
+    overflow: hidden; }
   .wp-oembed-blog-card__figure {
     float: right;
     position: relative;
@@ -29,10 +34,11 @@
       min-height: 100%;
       min-width: 100%;
       transform: translate(-50%, -50%); }
-      @supports (object-fit: cover) {
+      @supports ((-o-object-fit: cover) or (object-fit: cover)) {
         .wp-oembed-blog-card__figure img {
           height: 100%;
           width: 100%;
+          -o-object-fit: cover;
           object-fit: cover;
           top: 0;
           bottom: 0;
