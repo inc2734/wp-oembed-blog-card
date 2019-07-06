@@ -5,26 +5,18 @@ import {Card} from './module/_card.js';
 
 const cards = document.querySelectorAll('.js-wp-oembed-blog-card');
 
-if (typeof IntersectionObserver !== 'undefined') {
-  const observer = new IntersectionObserver(
-    (entries, object) => {
-      entries.forEach(
-        (entry, i) => {
-          if (! entry.isIntersecting) {
-            return;
-          }
+let delay = 0;
 
-          new Card(entry.target);
-          object.unobserve(entry.target);
-        }
-      );
-    },
-    {
-      rootMargin: '200px',
-    }
-  );
-
-  forEachHtmlNodes(cards, (card) => observer.observe(card));
-} else {
-  forEachHtmlNodes(cards, (card) => new Card(card));
-}
+forEachHtmlNodes(
+  cards,
+  (card) => {
+    setTimeout(
+      () => {
+        const cardObj = new Card(card);
+        cardObj.request();
+      },
+      delay
+    );
+    delay += 100;
+  }
+);

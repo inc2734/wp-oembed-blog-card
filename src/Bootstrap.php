@@ -14,6 +14,8 @@ use Inc2734\WP_OEmbed_Blog_Card\App\Setup;
 class Bootstrap {
 
 	public function __construct() {
+		add_action( 'rest_api_init', [ $this, '_rest_api_init' ] );
+
 		if ( $this->_is_admin_request() ) {
 			return false;
 		}
@@ -30,6 +32,36 @@ class Bootstrap {
 		} else {
 			new Setup\Assets();
 		}
+	}
+
+	/**
+	 * Add REST API for get blog card content from ajax
+	 *
+	 * @SuppressWarnings(PHPMD.ExitExpression)
+	 *
+	 * @param string $cache
+	 * @param string $url
+	 * @return string
+	 */
+	public function _rest_api_init() {
+		register_rest_route(
+			'wp-oembed-blog-card/v1',
+			'/response',
+			[
+				'methods'  => 'GET',
+				'callback' => function( $request ) {
+					$params = $request->get_params();
+					if ( empty( $params['url'] ) ) {
+						return;
+					}
+
+					header( 'Content-Type: text/html; charset=utf-8' );
+					$url = esc_url_raw( wp_unslash( $params['url'] ) );
+					echo wp_kses_post( View::get_template( $url ) );
+					die();
+				},
+			]
+		);
 	}
 
 	/**
@@ -84,7 +116,7 @@ class Bootstrap {
 		}
 
 		return [
-			'provider_name' => 'inc2734/wp-oembed-blog-card',
+			'provider_name' => 'wp-oembed-blog-card',
 			'html'          => $html,
 		];
 	}
