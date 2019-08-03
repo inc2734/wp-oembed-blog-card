@@ -7,6 +7,8 @@
 
 namespace Inc2734\WP_OEmbed_Blog_Card\App\Model;
 
+use WP_Error;
+
 class Requester {
 
 	/**
@@ -55,7 +57,7 @@ class Requester {
 	 */
 	public function request() {
 		if ( 0 === strpos( $this->url, 'http://127.0.0.1:' ) || 0 === strpos( $this->url, 'http://localhost:' ) ) {
-			return new \WP_Error(
+			return new WP_Error(
 				'http_request_failed',
 				__( 'Requests for local URLs are not supported.', 'inc2734-wp-oembed-blog-card' )
 			);

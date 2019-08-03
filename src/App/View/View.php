@@ -47,6 +47,8 @@ class View {
 			return;
 		}
 
+		Cache::refresh( $url );
+
 		if ( 0 === strpos( $url, home_url() ) ) {
 			$target = '_self';
 		} else {
