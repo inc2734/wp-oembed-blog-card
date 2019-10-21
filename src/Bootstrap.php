@@ -144,6 +144,7 @@ class Bootstrap {
 	protected function _render( $url ) {
 		if ( ! is_admin() ) {
 			if ( $this->_is_block_embed_rendering_request() ) {
+				$this->_maybe_refresh_cache( $url );
 				return View::get_block_template( $url );
 			}
 
