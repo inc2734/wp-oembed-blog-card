@@ -33,7 +33,10 @@ class View {
 		);
 		// @codingStandardsIgnoreEnd
 
-		return static::_strip_newlines( apply_filters( 'wp_oembed_blog_card_gutenberg_template', $template, $url ) );
+		$template = apply_filters( 'wp_oembed_blog_card_gutenberg_template', $template, $url ); // @deprecated
+		$template = apply_filters( 'inc2734_wp_oembed_blog_card_block_editor_template', $template, $url );
+
+		return static::_strip_newlines( $template );
 	}
 
 	/**
@@ -55,19 +58,18 @@ class View {
 			$target = '_blank';
 		}
 
-		return static::_strip_newlines(
-			apply_filters(
-				'wp_oembed_blog_card_loading_template',
-				sprintf(
-					'<div class="js-wp-oembed-blog-card">
-						<a class="js-wp-oembed-blog-card__link" href="%1$s" target="%2$s">%1$s</a>
-					</div>',
-					esc_url( $url ),
-					esc_attr( $target )
-				),
-				$url
-			)
-		);
+		ob_start();
+		?>
+		<div class="js-wp-oembed-blog-card">
+			<a class="js-wp-oembed-blog-card__link" href="%1$s" target="%2$s">%1$s</a>
+		</div>
+		<?php
+		$template = ob_get_clean();
+		$template = sprintf( $template, esc_url( $url ), esc_attr( $target ) );
+		$template = apply_filters( 'wp_oembed_blog_card_loading_template', $template, $url ); // @deprecated
+		$template = apply_filters( 'inc2734_wp_oembed_blog_card_loading_template', $template, $url );
+
+		return static::_strip_newlines( $template );
 	}
 
 	/**
@@ -97,18 +99,18 @@ class View {
 	 * @return string
 	 */
 	public static function get_url_template( $url ) {
-		return static::_strip_newlines(
-			apply_filters(
-				'wp_oembed_blog_card_url_template',
-				sprintf(
-					'<p class="wp-oembed-blog-card-url-template">
-						<a href="%1$s" target="_blank">%1$s</a>
-					</p>',
-					esc_url( $url )
-				),
-				$url
-			)
-		);
+		ob_start();
+		?>
+		<p class="wp-oembed-blog-card-url-template">
+			<a href="%1$s" target="_blank">%1$s</a>
+		</p>
+		<?php
+		$template = ob_get_clean();
+		$template = sprintf( $template, $url );
+		$template = apply_filters( 'wp_oembed_blog_card_url_template', $template, $url ); // @deprecated
+		$template = apply_filters( 'inc2734_wp_oembed_blog_card_url_template', $template, $url );
+
+		return static::_strip_newlines( $template );
 	}
 
 	/**
@@ -159,7 +161,10 @@ class View {
 			</a>
 		</div>
 		<?php
-		return static::_strip_newlines( apply_filters( 'wp_oembed_blog_card_blog_card_template', ob_get_clean(), $cache ) );
+		$template = ob_get_clean();
+		$template = apply_filters( 'wp_oembed_blog_card_blog_card_template', $template, $cache ); // @deprecated
+		$template = apply_filters( 'inc2734_wp_oembed_blog_card_blog_card_template', $template, $cache );
+		return static::_strip_newlines( $template );
 	}
 
 	/**

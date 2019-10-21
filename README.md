@@ -12,8 +12,7 @@ $ composer require inc2734/wp-oembed-blog-card
 ## How to use
 ```
 <?php
-// When Using composer auto loader
-$Blog_Card = new Inc2734\WP_OEmbed_Blog_Card\Bootstrap();
+new \Inc2734\WP_OEmbed_Blog_Card\Bootstrap();
 ```
 
 Then just copy and paste the URL into the article!
@@ -21,3 +20,81 @@ Then just copy and paste the URL into the article!
 - Data used for blog cards will be cached.
 - The cache is updated when you open the post edit screen.
 - On the display screen url is converted to blog card with ajax.
+
+## Filter hooks
+### inc2734_wp_oembed_blog_card_block_editor_template
+```
+/**
+ * Customize template for block editor
+ *
+ * @param string $template
+ * @param string $url
+ * @return string
+ */
+add_filter(
+	'inc2734_wp_oembed_blog_card_block_editor_template',
+	function( $template, $url ) {
+		return $template;
+	},
+	10,
+	2
+);
+```
+
+### inc2734_wp_oembed_blog_card_loading_template
+```
+/**
+ * Customize template for loading
+ *
+ * @param string $template
+ * @param string $url
+ * @return string
+ */
+add_filter(
+	'inc2734_wp_oembed_blog_card_loading_template',
+	function( $template, $url ) {
+		return $template;
+	},
+	10,
+	2
+);
+```
+
+### inc2734_wp_oembed_blog_card_url_template
+```
+/**
+ * Customize url template
+ *
+ * @param string $template
+ * @param string $url
+ * @return string
+ */
+add_filter(
+	'inc2734_wp_oembed_blog_card_url_template',
+	function( $template, $url ) {
+		return $template;
+	},
+	10,
+	2
+);
+```
+
+### inc2734_wp_oembed_blog_card_blog_card_template
+
+```
+/**
+ * Customize blog card template
+ *
+ * @param string $template
+ * @param array $cache
+ * @return string
+ */
+add_filter(
+	'inc2734_wp_oembed_blog_card_blog_card_template',
+	function( $template, $cache ) {
+		return $template;
+	},
+	10,
+	2
+);
+```
