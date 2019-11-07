@@ -115,12 +115,12 @@ class Parser {
 	 * @return string
 	 */
 	protected function _get_title( $content ) {
-		preg_match( '/<meta +?property=["\']og:title["\'][^\/>]*? content=["\']([^"\']+?)["\'].*?\/?>/si', $content, $reg );
+		preg_match( '/<meta [^>]*?property=["\']og:title["\'][^\/>]*? content=["\']([^"\']+?)["\'].*?\/?>/si', $content, $reg );
 		if ( ! empty( $reg[1] ) ) {
 			return $reg[1];
 		}
 
-		preg_match( '/<title>([^"\']+?)<\/title>/si', $content, $reg );
+		preg_match( '/<title[^>]*?>([^"\']+?)<\/title>/si', $content, $reg );
 		if ( ! empty( $reg[1] ) ) {
 			return $reg[1];
 		}
@@ -133,7 +133,7 @@ class Parser {
 	 * @return string
 	 */
 	protected function _get_permalink( $content ) {
-		preg_match( '/<meta +?property=["\']og:url["\'][^\/>]*? content=["\']([^"\']+?)["\'].*?\/?>/si', $content, $reg );
+		preg_match( '/<meta [^>]*?property=["\']og:url["\'][^\/>]*? content=["\']([^"\']+?)["\'].*?\/?>/si', $content, $reg );
 		if ( ! empty( $reg[1] ) ) {
 			return $reg[1];
 		}
@@ -148,12 +148,12 @@ class Parser {
 	 * @return string
 	 */
 	protected function _get_description( $content ) {
-		preg_match( '/<meta +?property=["\']og:description["\'][^\/>]*? content=["\']([^"\']+?)["\'].*?\/?>/si', $content, $reg );
+		preg_match( '/<meta [^>]*?property=["\']og:description["\'][^\/>]*? content=["\']([^"\']+?)["\'].*?\/?>/si', $content, $reg );
 		if ( ! empty( $reg[1] ) ) {
 			return $reg[1];
 		}
 
-		preg_match( '/<meta +?name=["\']description["\'][^\/>]*? content=["\']([^"\']+?)["\'].*?\/?>/si', $content, $reg );
+		preg_match( '/<meta [^>]*?name=["\']description["\'][^\/>]*? content=["\']([^"\']+?)["\'].*?\/?>/si', $content, $reg );
 		if ( ! empty( $reg[1] ) ) {
 			return $reg[1];
 		}
@@ -184,9 +184,9 @@ class Parser {
 	 * @return string
 	 */
 	protected function _get_favicon( $content ) {
-		preg_match( '/<link +?rel=["\']shortcut icon["\'][^\/>]*? href=["\']([^"\']+?)["\'][^\/>]*?\/?>/si', $content, $reg );
+		preg_match( '/<link [^>]*?rel=["\']shortcut icon["\'][^\/>]*? href=["\']([^"\']+?)["\'][^\/>]*?\/?>/si', $content, $reg );
 		if ( empty( $reg[1] ) ) {
-			preg_match( '/<link +?rel=["\']icon["\'][^\/>]*? href=["\']([^"\']+?)["\'][^\/>]*?\/?>/si', $content, $reg );
+			preg_match( '/<link [^>]*?rel=["\']icon["\'][^\/>]*? href=["\']([^"\']+?)["\'][^\/>]*?\/?>/si', $content, $reg );
 		}
 
 		if ( empty( $reg[1] ) ) {
@@ -221,7 +221,7 @@ class Parser {
 	 * @return string
 	 */
 	protected function _get_thumbnail( $content ) {
-		preg_match( '/<meta +?property=["\']og:image["\'][^\/>]*? content=["\']([^"\']+?)["\'].*?\/?>/si', $content, $reg );
+		preg_match( '/<meta [^>]*?property=["\']og:image["\'][^\/>]*? content=["\']([^"\']+?)["\'].*?\/?>/si', $content, $reg );
 		if ( empty( $reg[1] ) ) {
 			return;
 		}
