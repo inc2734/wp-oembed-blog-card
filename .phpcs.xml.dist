@@ -42,4 +42,9 @@
 	<rule ref="WordPress-Extra">
 		<exclude name="WordPress.Files.FileName" />
 	</rule>
+	<rule ref="WordPress-Extra">
+		<exclude name="Generic.Arrays.DisallowShortArraySyntax.Found"/>
+		<exclude name="WordPress.Files.FileName.NotHyphenatedLowercase"/>
+		<exclude name="WordPress.Files.FileName.InvalidClassFileName"/>
+	</rule>
 </ruleset>
