@@ -147,6 +147,7 @@ class Bootstrap {
 			}
 
 			if ( ! Cache::get( $url ) ) {
+				Cache::refresh( $url );
 				return View::get_pre_blog_card_template( $url );
 			}
 

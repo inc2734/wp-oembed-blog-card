@@ -32,6 +32,9 @@ class Requester {
 	 */
 	protected $response = [];
 
+	protected $interval_increment = 100;
+	protected static $interval = 0;
+
 	/**
 	 * @param string $url
 	 */
@@ -63,6 +66,19 @@ class Requester {
 			);
 		}
 
+		$cache_key   = md5( json_encode( $this->url ) );
+		$cache_group = 'inc2734/wp-oembed-blog-card/request';
+		$cache       = wp_cache_get( $cache_key, $cache_group );
+		if ( false !== $cache ) {
+			$this->response = $cache;
+			return $cache;
+		}
+
+		if ( 0 < static::$interval ) {
+			sleep( static::$interval / 1000 );
+		}
+		static::$interval += $this->interval_increment;
+
 		$this->response = wp_remote_get(
 			$this->url,
 			[
@@ -71,6 +87,7 @@ class Requester {
 			]
 		);
 
+		wp_cache_set( $cache_key, $this->response, $cache_group );
 		return $this->response;
 	}
 

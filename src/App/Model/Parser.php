@@ -201,7 +201,7 @@ class Parser {
 		}
 
 		$requester = new Requester( $favicon );
-		$response  = $requester->request( $favicon );
+		$response  = $requester->request();
 		if ( is_wp_error( $response ) ) {
 			return;
 		}
@@ -234,7 +234,7 @@ class Parser {
 		}
 
 		$requester = new Requester( $thumbnail );
-		$response  = $requester->request( $thumbnail );
+		$response  = $requester->request();
 		if ( is_wp_error( $response ) ) {
 			return;
 		}
