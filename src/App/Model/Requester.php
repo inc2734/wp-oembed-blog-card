@@ -104,7 +104,17 @@ class Requester {
 			return;
 		}
 
-		return $headers->offsetGet( 'content-type' );
+		$content_type = $headers->offsetGet( 'content-type' );
+		if ( $content_type ) {
+			return $content_type;
+		}
+
+		$content = $this->get_content();
+		if ( false !== strpos( $content, '<html ' ) ) {
+			return 'text/html';
+		}
+
+		return false;
 	}
 
 	/**

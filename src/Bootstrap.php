@@ -37,8 +37,6 @@ class Bootstrap {
 	/**
 	 * Add REST API for get blog card content from ajax
 	 *
-	 * @SuppressWarnings(PHPMD.ExitExpression)
-	 *
 	 * @param string $cache
 	 * @param string $url
 	 * @return string
