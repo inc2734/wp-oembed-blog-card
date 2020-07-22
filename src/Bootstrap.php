@@ -58,6 +58,7 @@ class Bootstrap {
 					echo wp_kses_post( View::get_template( $url ) );
 					die();
 				},
+				'permission_callback' => '__return_true',
 			]
 		);
 	}
