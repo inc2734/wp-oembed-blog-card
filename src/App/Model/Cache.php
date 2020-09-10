@@ -7,7 +7,60 @@
 
 namespace Inc2734\WP_OEmbed_Blog_Card\App\Model;
 
+require_once( ABSPATH . 'wp-admin/includes/file.php' );
+
 class Cache {
+
+	protected static $_wp_file_system;
+
+	protected static function _wp_filesystem() {
+		global $wp_filesystem;
+		static::$_wp_file_system = $wp_filesystem;
+		WP_Filesystem();
+		return $wp_filesystem;
+	}
+
+	protected static function _reset_wp_filesystem() {
+		global $wp_filesystem;
+		$wp_filesystem = static::$_wp_file_system; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+	}
+
+	/**
+	 * Return the directory where the cache is stored.
+	 *
+	 * @param string|null $url
+	 * @return string
+	 */
+	public static function get_directory( $url = null ) {
+		$upload_dir = wp_upload_dir();
+		$directory  = path_join( $upload_dir['basedir'], 'wp-oembed-blog-card/' );
+
+		if ( ! is_null( $url ) ) {
+			$host = parse_url( $url, PHP_URL_HOST );
+			$directory = path_join( $directory, $host );
+		}
+
+		if ( ! file_exists( $directory ) ) {
+			$created = wp_mkdir_p( $directory );
+			if ( ! $created ) {
+				return false;
+			}
+		}
+
+		if ( ! is_writable( $directory ) ) {
+			return false;
+		}
+
+		return $directory;
+	}
+
+	public static function rmdir() {
+		$wp_filesystem = static::_wp_filesystem();
+		if ( $wp_filesystem ) {
+			$wp_filesystem->rmdir( static::get_directory(), true );
+		}
+		static::_reset_wp_filesystem();
+	}
 
 	/**
 	 * Return cache
@@ -16,9 +69,26 @@ class Cache {
 	 * @return array
 	 */
 	public static function get( $url ) {
-		$cache = get_transient( static::_get_meta_key( $url ) );
-		$cache = ! $cache || ! is_array( $cache ) ? [] : $cache;
-		return $cache;
+		$directory = static::get_directory( $url );
+		if ( ! $directory ) {
+			return false;
+		}
+
+		$filepath  = trailingslashit( $directory ) . static::_get_meta_key( $url ) . '.html';
+		if ( ! file_exists( $filepath ) ) {
+			return false;
+		}
+
+		$cache = false;
+		$wp_filesystem = static::_wp_filesystem();
+		if ( $wp_filesystem ) {
+			$cache = $wp_filesystem->get_contents( $filepath );
+		}
+		static::_reset_wp_filesystem();
+
+		return $cache
+			? json_decode( $cache, true )
+			: false;
 	}
 
 	/**
@@ -40,9 +110,20 @@ class Cache {
 			'cached_time' => time(),
 		];
 
-		$expiration = empty( $cache['title'] ) ? HOUR_IN_SECONDS : YEAR_IN_SECONDS;
+		delete_transient( static::_get_meta_key( $url ) ); // Delete old version cache.
 
-		set_transient( static::_get_meta_key( $url ), $cache, $expiration );
+		$content = false;
+		$wp_filesystem = static::_wp_filesystem();
+		if ( $wp_filesystem ) {
+			$directory = static::get_directory( $url );
+			if ( $directory ) {
+				$filepath  = trailingslashit( $directory ) . static::_get_meta_key( $url ) . '.html';
+				$content = $wp_filesystem->put_contents( $filepath, json_encode( $cache ) );
+			}
+		}
+		static::_reset_wp_filesystem();
+
+		return $content;
 	}
 
 	/**

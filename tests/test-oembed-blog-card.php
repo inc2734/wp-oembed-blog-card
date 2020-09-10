@@ -3,6 +3,8 @@ class OEmbed_Blog_Card_Test extends WP_UnitTestCase {
 
 	public function setup() {
 		parent::setup();
+
+		$directory = \Inc2734\WP_OEmbed_Blog_Card\App\Model\Cache::rmdir();
 	}
 
 	public function tearDown() {
