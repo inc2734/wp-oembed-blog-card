@@ -1,5 +1,3 @@
-'use strict';
-
 import forEachHtmlNodes from '@inc2734/for-each-html-nodes';
 import {Card} from './module/_card.js';
 
@@ -17,6 +15,6 @@ forEachHtmlNodes(
       },
       delay
     );
-    delay += 100;
+    delay += 1000;
   }
 );

@@ -146,7 +146,7 @@ class Bootstrap {
 		}
 
 		// When open the editor
-		if ( Cache::expired( $url, 1000 ) ) {
+		if ( Cache::expired( $url ) ) {
 			Cache::refresh( $url );
 		}
 		return View::get_template( $url );

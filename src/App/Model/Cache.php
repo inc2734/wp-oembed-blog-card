@@ -11,9 +11,6 @@ require_once( ABSPATH . 'wp-admin/includes/file.php' );
 
 class Cache {
 
-	protected static $interval_increment = 500;
-	protected static $interval = 0;
-
 	protected static $_wp_file_system;
 
 	protected static function _wp_filesystem() {
@@ -89,13 +86,13 @@ class Cache {
 			: false;
 	}
 
-	public static function expired( $url, $expire = HOUR_IN_SECONDS ) {
+	public static function expired( $url, $expire = MINUTE_IN_SECONDS ) {
 		$cache = static::get( $url );
 		if ( ! $cache ) {
 			return false;
 		}
 
-		if ( time() > $cache['cached_time'] + $expire ) {
+		if ( time() < $cache['cached_time'] + $expire ) {
 			return false;
 		}
 
@@ -122,14 +119,6 @@ class Cache {
 	 * @return void
 	 */
 	public static function refresh( $url ) {
-		error_log( '---------------------------------------------------' );
-		error_log( 'refresh' );
-		error_log( $url );
-		if ( 0 < static::$interval ) {
-			sleep( static::$interval / 1000 );
-		}
-		static::$interval += static::$interval_increment;
-
 		$parser = new Parser( $url );
 
 		$cache = [
