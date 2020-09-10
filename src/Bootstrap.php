@@ -55,6 +55,8 @@ class Bootstrap {
 
 					header( 'Content-Type: text/html; charset=utf-8' );
 					$url = esc_url_raw( wp_unslash( $params['url'] ) );
+					Cache::refresh( $url );
+
 					echo wp_kses_post( View::get_template( $url ) );
 					die();
 				},
@@ -121,41 +123,32 @@ class Bootstrap {
 	}
 
 	/**
-	 * Refresh cache if the cache is expired or is_admin
-	 *
-	 * @param string $url
-	 * @return void
-	 */
-	protected function _maybe_refresh_cache( $url ) {
-		$cache = Cache::get( $url );
-
-		if ( ! $cache || is_admin() ) {
-			Cache::refresh( $url );
-		}
-	}
-
-	/**
-	 * Rendering bloc card on editor
+	 * Rendering blog card on editor
 	 *
 	 * @param string $url
 	 * @return string
 	 */
 	protected function _render( $url ) {
 		if ( ! is_admin() ) {
+			// When paste URL to the editor
 			if ( $this->_is_block_embed_rendering_request() ) {
-				$this->_maybe_refresh_cache( $url );
+				if ( ! Cache::get( $url ) || ( Cache::broken( $url ) && Cache::expired( $url ) ) ) {
+					Cache::refresh( $url );
+				}
 				return View::get_block_template( $url );
 			}
 
 			if ( ! Cache::get( $url ) ) {
-				Cache::refresh( $url );
 				return View::get_pre_blog_card_template( $url );
 			}
 
 			return View::get_template( $url );
 		}
 
-		$this->_maybe_refresh_cache( $url );
+		// When open the editor
+		if ( Cache::expired( $url, 1000 ) ) {
+			Cache::refresh( $url );
+		}
 		return View::get_template( $url );
 	}
 

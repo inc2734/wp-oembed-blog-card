@@ -32,9 +32,6 @@ class Requester {
 	 */
 	protected $response = [];
 
-	protected $interval_increment = 100;
-	protected static $interval = 0;
-
 	/**
 	 * @param string $url
 	 */
@@ -73,11 +70,6 @@ class Requester {
 			$this->response = $cache;
 			return $cache;
 		}
-
-		if ( 0 < static::$interval ) {
-			sleep( static::$interval / 1000 );
-		}
-		static::$interval += $this->interval_increment;
 
 		$this->response = wp_remote_get(
 			$this->url,

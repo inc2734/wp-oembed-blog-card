@@ -11,6 +11,9 @@ require_once( ABSPATH . 'wp-admin/includes/file.php' );
 
 class Cache {
 
+	protected static $interval_increment = 500;
+	protected static $interval = 0;
+
 	protected static $_wp_file_system;
 
 	protected static function _wp_filesystem() {
@@ -69,12 +72,7 @@ class Cache {
 	 * @return array
 	 */
 	public static function get( $url ) {
-		$directory = static::get_directory( $url );
-		if ( ! $directory ) {
-			return false;
-		}
-
-		$filepath  = trailingslashit( $directory ) . static::_get_meta_key( $url ) . '.html';
+		$filepath = static::_get_cache_filepath( $url );
 		if ( ! file_exists( $filepath ) ) {
 			return false;
 		}
@@ -91,6 +89,32 @@ class Cache {
 			: false;
 	}
 
+	public static function expired( $url, $expire = HOUR_IN_SECONDS ) {
+		$cache = static::get( $url );
+		if ( ! $cache ) {
+			return false;
+		}
+
+		if ( time() > $cache['cached_time'] + $expire ) {
+			return false;
+		}
+
+		return true;
+	}
+
+	public static function broken( $url ) {
+		$cache = static::get( $url );
+		if ( ! $cache ) {
+			return false;
+		}
+
+		if ( ! is_null( $cache['title'] ) ) {
+			return false;
+		}
+
+		return true;
+	}
+
 	/**
 	 * Refresh cache
 	 *
@@ -98,6 +122,14 @@ class Cache {
 	 * @return void
 	 */
 	public static function refresh( $url ) {
+		error_log( '---------------------------------------------------' );
+		error_log( 'refresh' );
+		error_log( $url );
+		if ( 0 < static::$interval ) {
+			sleep( static::$interval / 1000 );
+		}
+		static::$interval += static::$interval_increment;
+
 		$parser = new Parser( $url );
 
 		$cache = [
@@ -115,15 +147,31 @@ class Cache {
 		$content = false;
 		$wp_filesystem = static::_wp_filesystem();
 		if ( $wp_filesystem ) {
-			$directory = static::get_directory( $url );
-			if ( $directory ) {
-				$filepath  = trailingslashit( $directory ) . static::_get_meta_key( $url ) . '.html';
+			$filepath = static::_get_cache_filepath( $url );
+			if ( $filepath ) {
 				$content = $wp_filesystem->put_contents( $filepath, json_encode( $cache ) );
 			}
 		}
 		static::_reset_wp_filesystem();
 
 		return $content;
+	}
+
+	/**
+	 * Get cache filename
+	 *
+	 * @see https://qiita.com/koriym/items/efc1c419e4b7772b65c0
+	 *
+	 * @param string $url
+	 * @return string
+	 */
+	protected static function _get_cache_filepath( $url ) {
+		$directory = static::get_directory( $url );
+		if ( ! $directory ) {
+			return false;
+		}
+
+		return path_join( $directory, sha1( $url ) . '.json' );
 	}
 
 	/**

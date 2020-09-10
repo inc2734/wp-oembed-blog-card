@@ -82,12 +82,18 @@ class View {
 		}
 
 		$cache = Cache::get( $url );
+		if ( ! $cache ) {
+			return static::get_pre_blog_card_template( $url );
+		}
 
-		return static::_strip_newlines(
-			! empty( $cache['title'] )
-				? static::get_blog_card_template( $url, $cache )
-				: static::get_url_template( $url )
-		);
+		if ( Cache::broken( $url ) ) {
+			if ( Cache::expired( $url ) ) {
+				return static::get_pre_blog_card_template( $url );
+			}
+			return static::get_url_template( $url );
+		}
+
+		return static::get_blog_card_template( $url, $cache );
 	}
 
 	/**
