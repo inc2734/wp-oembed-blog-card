@@ -110,6 +110,18 @@ class Bootstrap {
 			}
 		}
 
+		if ( ! $request->get_param( 'url' ) ) {
+			return $response;
+		}
+
+		$transient_name = 'wp-oembed-blog-card-delay';
+		$delay = (int) get_transient( $transient_name );
+		if ( 0 < $delay ) {
+			sleep( $delay );
+		}
+		$delay ++;
+		set_transient( $transient_name, $delay, 5 );
+
 		global $wp_embed;
 		$html = $wp_embed->shortcode( [], $request->get_param( 'url' ) );
 		if ( ! $html ) {
