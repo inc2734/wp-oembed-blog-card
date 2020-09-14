@@ -10,7 +10,9 @@ export class Card {
 
   request() {
     const queryString = `url=${encodeURIComponent(this.query.url)}`;
-    const url = `${WP_OEMBED_BLOG_CARD.endpoint}/response/?${queryString}`;
+    const url = -1 === WP_OEMBED_BLOG_CARD.endpoint.indexOf( '?' )
+      ? `${WP_OEMBED_BLOG_CARD.endpoint}/response/?${queryString}`
+      : `${WP_OEMBED_BLOG_CARD.endpoint}/response/&${queryString}`;
     const xhr = new XMLHttpRequest();
 
     xhr.onreadystatechange = () => {

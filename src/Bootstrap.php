@@ -10,6 +10,7 @@ namespace Inc2734\WP_OEmbed_Blog_Card;
 use Inc2734\WP_OEmbed_Blog_Card\App\Model\Cache;
 use Inc2734\WP_OEmbed_Blog_Card\App\View\View;
 use Inc2734\WP_OEmbed_Blog_Card\App\Setup;
+use \WP_Error;
 
 class Bootstrap {
 
@@ -50,7 +51,7 @@ class Bootstrap {
 				'callback' => function( $request ) {
 					$params = $request->get_params();
 					if ( empty( $params['url'] ) ) {
-						return;
+						return new WP_Error( 404, __( 'URL not found', 'inc2734-wp-oembed-blog-card' ) );
 					}
 
 					header( 'Content-Type: text/html; charset=utf-8' );
@@ -104,13 +105,17 @@ class Bootstrap {
 	 * @return WP_HTTP_Response|object|WP_Error    The REST Request response.
 	 */
 	public function _block_filter_oembed_result( $response, $handler, $request ) {
+		if ( '/oembed/1.0/proxy' !== $request->get_route() ) {
+			return $response;
+		}
+
 		if ( isset( $response->html ) ) {
 			if ( 0 !== strpos( $response->html, '<blockquote class="wp-embedded-content"' ) ) {
 				return $response;
 			}
 		}
 
-		if ( ! $request->get_param( 'url' ) ) {
+		if ( empty( $_GET['url'] ) ) {
 			return $response;
 		}
 
@@ -123,7 +128,7 @@ class Bootstrap {
 		set_transient( $transient_name, $delay, 5 );
 
 		global $wp_embed;
-		$html = $wp_embed->shortcode( [], $request->get_param( 'url' ) );
+		$html = $wp_embed->shortcode( [], $_GET['url'] );
 		if ( ! $html ) {
 			return $response;
 		}

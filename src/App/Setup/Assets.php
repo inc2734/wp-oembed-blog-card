@@ -49,7 +49,7 @@ class Assets {
 			'wp-oembed-blog-card',
 			'WP_OEMBED_BLOG_CARD',
 			[
-				'endpoint' => home_url( '/wp-json/wp-oembed-blog-card/v1' ),
+				'endpoint' => get_rest_url( null, '/wp-oembed-blog-card/v1' ),
 			]
 		);
 	}

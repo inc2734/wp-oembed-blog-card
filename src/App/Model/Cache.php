@@ -33,7 +33,7 @@ class Cache {
 	 */
 	public static function get_directory( $url = null ) {
 		$upload_dir = wp_upload_dir();
-		$directory  = path_join( $upload_dir['basedir'], 'wp-oembed-blog-card/' );
+		$directory  = path_join( $upload_dir['basedir'], 'wp-oembed-blog-card' );
 
 		if ( ! is_null( $url ) ) {
 			$host = parse_url( $url, PHP_URL_HOST );
@@ -55,9 +55,9 @@ class Cache {
 	}
 
 	public static function rmdir() {
-		$wp_filesystem = static::_wp_filesystem();
-		if ( $wp_filesystem ) {
-			$wp_filesystem->rmdir( static::get_directory(), true );
+		$filesystem = static::_wp_filesystem();
+		if ( $filesystem ) {
+			$filesystem->rmdir( static::get_directory(), true );
 		}
 		static::_reset_wp_filesystem();
 	}
@@ -75,9 +75,9 @@ class Cache {
 		}
 
 		$cache = false;
-		$wp_filesystem = static::_wp_filesystem();
-		if ( $wp_filesystem ) {
-			$cache = $wp_filesystem->get_contents( $filepath );
+		$filesystem = static::_wp_filesystem();
+		if ( $filesystem ) {
+			$cache = $filesystem->get_contents( $filepath );
 		}
 		static::_reset_wp_filesystem();
 
@@ -134,11 +134,11 @@ class Cache {
 		delete_transient( static::_get_meta_key( $url ) ); // Delete old version cache.
 
 		$content = false;
-		$wp_filesystem = static::_wp_filesystem();
-		if ( $wp_filesystem ) {
+		$filesystem = static::_wp_filesystem();
+		if ( $filesystem ) {
 			$filepath = static::_get_cache_filepath( $url );
 			if ( $filepath ) {
-				$content = $wp_filesystem->put_contents( $filepath, json_encode( $cache ) );
+				$content = $filesystem->put_contents( $filepath, json_encode( $cache ) );
 			}
 		}
 		static::_reset_wp_filesystem();
