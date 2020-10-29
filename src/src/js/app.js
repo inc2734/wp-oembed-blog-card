@@ -1,5 +1,5 @@
 import forEachHtmlNodes from '@inc2734/for-each-html-nodes';
-import {Card} from './module/_card.js';
+import { Card } from './module/_card.js';
 
 const cards = document.querySelectorAll('.js-wp-oembed-blog-card');
 

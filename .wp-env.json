@@ -1,0 +1,9 @@
+{
+  "core": null,
+  "mappings": {
+    "wp-content/plugins/wp-oembed-blog-card": "./"
+  },
+  "config": {
+    "WP_DEBUG": true
+  }
+}

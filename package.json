@@ -2,34 +2,35 @@
   "author": "inc2734",
   "license": "GPL-2.0+",
   "devDependencies": {
-    "@babel/core": "^7.10.5",
-    "@babel/preset-env": "^7.10.4",
+    "@inc2734/for-each-html-nodes": "^0.4.0",
     "@wordpress/browserslist-config": "^2.7.0",
-    "babel-loader": "^8.1.0",
+    "@wordpress/env": "^2.1.0",
+    "@wordpress/scripts": "^12.4.0",
+    "autoprefixer": "^10.0.1",
     "cpy-cli": "^3.1.1",
-    "cssnano-cli": "^1.0.5",
+    "cssnano": "^4.1.10",
     "node-sass": "^4.14.1",
     "npm-run-all": "^4.1.5",
-    "postcss-cli": "^7.1.1",
-    "rimraf": "^3.0.2",
-    "webpack": "^4.43.0",
-    "webpack-cli": "^3.3.12"
+    "postcss": "^8.1.4",
+    "postcss-cli": "^8.1.0",
+    "rimraf": "^3.0.2"
   },
   "scripts": {
+    "wp-env": "wp-env",
+    "start": "wp-env start",
+    "stop": "wp-env stop",
+    "cli": "wp-env run cli",
+    "wp": "wp-env run cli wp",
+    "pretest": "wp-env start && wp-env run composer 'install --no-interaction'",
+    "test:lint:php": "wp-env run composer run-script lint",
+    "test:lint": "run-s test:lint:*",
+    "test:unit:php": "wp-env run phpunit 'phpunit -c /var/www/html/wp-content/plugins/wp-oembed-blog-card/.phpunit.xml.dist --verbose'",
+    "test:unit": "run-s test:unit:*",
+    "test": "run-s test:*",
     "cleanup:css": "rimraf src/assets/css",
     "cleanup:js": "rimraf src/assets/js",
-    "css:sass": "node-sass src/src/css -o src/assets/css",
-    "css:postcss": "postcss src/assets/css/**/*.css -r --no-map -c=postcss.config.js",
-    "minify:css:front": "cssnano src/assets/css/app.css src/assets/css/app.min.css --no-zindex",
-    "minify:css:embed": "cssnano src/assets/css/gutenberg-embed.css src/assets/css/gutenberg-embed.min.css --no-zindex",
-    "css": "npm-run-all -s cleanup:css css:sass css:postcss minify:css:front minify:css:embed",
-    "js:build": "webpack src/src/js/app.js -o src/assets/js/app.min.js --config webpack.config.js",
-    "js": "npm-run-all -s cleanup:js js:build",
-    "start": "npm run build",
-    "build": "npm-run-all -p css js",
-    "postinstall": "npm run build"
-  },
-  "dependencies": {
-    "@inc2734/for-each-html-nodes": "^0.4.0"
+    "css": "npm run cleanup:css && node-sass src/src/css -o src/assets/css && postcss src/assets/css/*.css -r",
+    "js": "npm run cleanup:js && wp-scripts build src/src/js/app --output-path=src/assets/js",
+    "build": "npm-run-all -p css js"
   }
 }

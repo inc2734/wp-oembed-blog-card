@@ -10,6 +10,10 @@ namespace Inc2734\WP_OEmbed_Blog_Card\App\Setup;
 use Inc2734\WP_OEmbed_Blog_Card\App\View\View;
 
 class Assets {
+
+	/**
+	 * Constructor.
+	 */
 	public function __construct() {
 		add_action( 'wp_enqueue_scripts', [ $this, '_enqueue_scripts' ] );
 		add_action( 'wp_enqueue_scripts', [ $this, '_enqueue_styles' ] );
@@ -19,24 +23,20 @@ class Assets {
 
 	/**
 	 * Add editor style
-	 *
-	 * @return void
 	 */
 	public function _add_editor_style() {
 		add_editor_style(
 			[
-				'vendor/inc2734/wp-oembed-blog-card/src/assets/css/app.min.css',
+				'vendor/inc2734/wp-oembed-blog-card/src/assets/css/app.css',
 			]
 		);
 	}
 
 	/**
 	 * Enqueue scripts
-	 *
-	 * @return void
 	 */
 	public function _enqueue_scripts() {
-		$relative_path = '/vendor/inc2734/wp-oembed-blog-card/src/assets/js/app.min.js';
+		$relative_path = '/vendor/inc2734/wp-oembed-blog-card/src/assets/js/app.js';
 		wp_enqueue_script(
 			'wp-oembed-blog-card',
 			get_template_directory_uri() . $relative_path,
@@ -60,7 +60,7 @@ class Assets {
 	 * @return void
 	 */
 	public function _enqueue_styles() {
-		$relative_path = '/vendor/inc2734/wp-oembed-blog-card/src/assets/css/app.min.css';
+		$relative_path = '/vendor/inc2734/wp-oembed-blog-card/src/assets/css/app.css';
 		wp_enqueue_style(
 			'wp-oembed-blog-card',
 			get_template_directory_uri() . $relative_path,

@@ -33,7 +33,9 @@ class Requester {
 	protected $response = [];
 
 	/**
-	 * @param string $url
+	 * Constructor.
+	 *
+	 * @param string $url Target URL.
 	 */
 	public function __construct( $url ) {
 		$this->url = $url;
@@ -51,7 +53,7 @@ class Requester {
 	}
 
 	/**
-	 * Request
+	 * Request.
 	 *
 	 * @return WP_Error|array
 	 */
@@ -84,7 +86,7 @@ class Requester {
 	}
 
 	/**
-	 * Return status code of the page you want to blog card
+	 * Return status code of the page you want to blog card.
 	 *
 	 * @return string
 	 */
@@ -99,7 +101,7 @@ class Requester {
 	}
 
 	/**
-	 * Return content type of the page you want to blog card
+	 * Return content type of the page you want to blog card.
 	 *
 	 * @return string
 	 */
@@ -127,7 +129,7 @@ class Requester {
 	}
 
 	/**
-	 * Return response body
+	 * Return response body.
 	 *
 	 * @return string
 	 */
@@ -142,7 +144,9 @@ class Requester {
 	}
 
 	/**
-	 * @param string $content
+	 * Encode.
+	 *
+	 * @param string $content The text you want to encode.
 	 * @return string
 	 */
 	protected function _encode( $content ) {

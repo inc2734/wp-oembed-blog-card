@@ -14,6 +14,9 @@ use \WP_Error;
 
 class Bootstrap {
 
+	/**
+	 * Constructor.
+	 */
 	public function __construct() {
 		add_action( 'rest_api_init', [ $this, '_rest_api_init' ] );
 
@@ -36,19 +39,15 @@ class Bootstrap {
 	}
 
 	/**
-	 * Add REST API for get blog card content from ajax
-	 *
-	 * @param string $cache
-	 * @param string $url
-	 * @return string
+	 * Add REST API for get blog card content from ajax.
 	 */
 	public function _rest_api_init() {
 		register_rest_route(
 			'wp-oembed-blog-card/v1',
 			'/response',
 			[
-				'methods'  => 'GET',
-				'callback' => function( $request ) {
+				'methods'             => 'GET',
+				'callback'            => function( $request ) {
 					$params = $request->get_params();
 					if ( empty( $params['url'] ) ) {
 						return new WP_Error( 404, __( 'URL not found', 'inc2734-wp-oembed-blog-card' ) );
@@ -67,10 +66,10 @@ class Bootstrap {
 	}
 
 	/**
-	 * Return embed html for WordPress oEmbed
+	 * Return embed html for WordPress oEmbed.
 	 *
-	 * @param string $cache
-	 * @param string $url
+	 * @param string|false $cache The cached HTML result, stored in post meta.
+	 * @param string       $url   The attempted embed URL.
 	 * @return string
 	 */
 	public function _embed_html_for_wordpress( $cache, $url ) {
@@ -82,10 +81,10 @@ class Bootstrap {
 	}
 
 	/**
-	 * Return embed HTML for non oEmbed link
+	 * Return embed HTML for non oEmbed link.
 	 *
-	 * @param string $output
-	 * @param string $url
+	 * @param string $output The linked or original URL.
+	 * @param string $url    The original URL.
 	 * @return string
 	 */
 	public function _embed_html_for_no_oembed( $output, $url ) {
@@ -120,7 +119,7 @@ class Bootstrap {
 		}
 
 		$transient_name = 'wp-oembed-blog-card-delay';
-		$delay = (int) get_transient( $transient_name );
+		$delay          = (int) get_transient( $transient_name );
 		if ( 0 < $delay ) {
 			sleep( $delay );
 		}
@@ -140,9 +139,9 @@ class Bootstrap {
 	}
 
 	/**
-	 * Rendering blog card on editor
+	 * Rendering blog card on editor.
 	 *
-	 * @param string $url
+	 * @param string $url Target URL.
 	 * @return string
 	 */
 	protected function _render( $url ) {
@@ -170,7 +169,7 @@ class Bootstrap {
 	}
 
 	/**
-	 * Return true when requested from WordPress
+	 * Return true when requested from WordPress.
 	 *
 	 * @return boolean
 	 */
@@ -185,7 +184,7 @@ class Bootstrap {
 	}
 
 	/**
-	 * Return true when requested from admin-ajax.php, wp-cron.php, wp-json
+	 * Return true when requested from admin-ajax.php, wp-cron.php, wp-json.
 	 *
 	 * @return boolean
 	 */
@@ -212,7 +211,7 @@ class Bootstrap {
 	}
 
 	/**
-	 * Return true when block embed rendering request
+	 * Return true when block embed rendering request.
 	 *
 	 * @return boolean
 	 */

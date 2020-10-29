@@ -73,7 +73,9 @@ class Parser {
 	protected $thumbnail;
 
 	/**
-	 * @param string $url
+	 * Constructor.
+
+	 * @param string $url Target URL.
 	 */
 	public function __construct( $url ) {
 		$this->url = $url;
@@ -85,7 +87,7 @@ class Parser {
 		}
 
 		$this->status_code = $requester->get_status_code();
-		if ( 200 != $this->get_status_code() && 304 != $this->get_status_code() ) {
+		if ( 200 !== $this->get_status_code() && 304 !== $this->get_status_code() ) {
 			return;
 		}
 
@@ -109,9 +111,9 @@ class Parser {
 	}
 
 	/**
-	 * Return page title of the page you want to blog card
+	 * Return page title of the page you want to blog card.
 	 *
-	 * @param string $content
+	 * @param string $content Content for title extraction.
 	 * @return string
 	 */
 	protected function _get_title( $content ) {
@@ -127,9 +129,9 @@ class Parser {
 	}
 
 	/**
-	 * Return URL of the page you want to blog card
+	 * Return URL of the page you want to blog card.
 	 *
-	 * @param string $content
+	 * @param string $content Content for permalink extraction.
 	 * @return string
 	 */
 	protected function _get_permalink( $content ) {
@@ -142,9 +144,9 @@ class Parser {
 	}
 
 	/**
-	 * Return page description of the page you want to blog card
+	 * Return page description of the page you want to blog card.
 	 *
-	 * @param string $content
+	 * @param string $content Content for description extraction.
 	 * @return string
 	 */
 	protected function _get_description( $content ) {
@@ -160,9 +162,9 @@ class Parser {
 	}
 
 	/**
-	 * Return domain of the page you want to blog card
+	 * Return domain of the page you want to blog card.
 	 *
-	 * @param string $content
+	 * @param string $content Content for domain extraction.
 	 * @return string
 	 */
 	protected function _get_domain( $content ) {
@@ -178,9 +180,9 @@ class Parser {
 	}
 
 	/**
-	 * Return favicon of the page you want to blog card
+	 * Return favicon of the page you want to blog card.
 	 *
-	 * @param string $content
+	 * @param string $content Content for favicon extraction.
 	 * @return string
 	 */
 	protected function _get_favicon( $content ) {
@@ -207,7 +209,7 @@ class Parser {
 		}
 
 		$status_code = $requester->get_status_code();
-		if ( 200 != $status_code && 304 != $status_code ) {
+		if ( 200 !== $status_code && 304 !== $status_code ) {
 			return;
 		}
 
@@ -215,9 +217,9 @@ class Parser {
 	}
 
 	/**
-	 * Return thumbnail of the page you want to blog card
+	 * Return thumbnail of the page you want to blog card.
 	 *
-	 * @param string $content
+	 * @param string $content Content for thumbnail extraction.
 	 * @return string
 	 */
 	protected function _get_thumbnail( $content ) {
@@ -240,7 +242,7 @@ class Parser {
 		}
 
 		$status_code = $requester->get_status_code();
-		if ( 200 != $status_code && 304 != $status_code ) {
+		if ( 200 !== $status_code && 304 !== $status_code ) {
 			return;
 		}
 
@@ -248,10 +250,10 @@ class Parser {
 	}
 
 	/**
-	 * Return url that converted from relative path
+	 * Return url that converted from relative path.
 	 *
-	 * @param string $path
-	 * @param string $content
+	 * @param string $path    The file path to be converted to a URL.
+	 * @param string $content Content for URL extraction.
 	 * @return string
 	 */
 	protected function _relative_path_to_url( $path, $content ) {
@@ -273,25 +275,25 @@ class Parser {
 	}
 
 	/**
-	 * Return status code of the page you want to blog card
+	 * Return status code of the page you want to blog card.
 	 *
 	 * @return int
 	 */
 	public function get_status_code() {
-		return $this->status_code;
+		return (int) $this->status_code;
 	}
 
 	/**
-	 * Return content type of the page you want to blog card
+	 * Return content type of the page you want to blog card.
 	 *
 	 * @return int
 	 */
 	public function get_content_type() {
-		return $this->content_type;
+		return strtolower( $this->content_type );
 	}
 
 	/**
-	 * Return page title of the page you want to blog card
+	 * Return page title of the page you want to blog card.
 	 *
 	 * @return string
 	 */
@@ -300,7 +302,7 @@ class Parser {
 	}
 
 	/**
-	 * Return URL of the page you want to blog card
+	 * Return URL of the page you want to blog card.
 	 *
 	 * @return string
 	 */
@@ -309,7 +311,7 @@ class Parser {
 	}
 
 	/**
-	 * Return page description of the page you want to blog card
+	 * Return page description of the page you want to blog card.
 	 *
 	 * @return string
 	 */
@@ -318,7 +320,7 @@ class Parser {
 	}
 
 	/**
-	 * Return domain of the page you want to blog card
+	 * Return domain of the page you want to blog card.
 	 *
 	 * @return string
 	 */
@@ -327,7 +329,7 @@ class Parser {
 	}
 
 	/**
-	 * Return favicon of the page you want to blog card
+	 * Return favicon of the page you want to blog card.
 	 *
 	 * @return string
 	 */
@@ -336,7 +338,7 @@ class Parser {
 	}
 
 	/**
-	 * Return thumbnail of the page you want to blog card
+	 * Return thumbnail of the page you want to blog card.
 	 *
 	 * @return string
 	 */

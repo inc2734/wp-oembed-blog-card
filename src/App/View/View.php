@@ -12,9 +12,9 @@ use Inc2734\WP_OEmbed_Blog_Card\App\Model\Cache;
 class View {
 
 	/**
-	 * Render template for block editor
+	 * Render template for block editor.
 	 *
-	 * @param string $url
+	 * @param string $url Target URL.
 	 * @return string
 	 */
 	public static function get_block_template( $url ) {
@@ -25,11 +25,11 @@ class View {
 		// @codingStandardsIgnoreStart
 		$template .= sprintf(
 			'<link rel="stylesheet" href="%1$s">',
-			esc_url_raw( get_template_directory_uri() . '/vendor/inc2734/wp-oembed-blog-card/src/assets/css/gutenberg-embed.min.css' )
+			esc_url_raw( get_template_directory_uri() . '/vendor/inc2734/wp-oembed-blog-card/src/assets/css/gutenberg-embed.css' )
 		);
 		$template .= sprintf(
 			'<link rel="stylesheet" href="%1$s">',
-			esc_url_raw( get_template_directory_uri() . '/vendor/inc2734/wp-oembed-blog-card/src/assets/css/app.min.css' )
+			esc_url_raw( get_template_directory_uri() . '/vendor/inc2734/wp-oembed-blog-card/src/assets/css/app.css' )
 		);
 		// @codingStandardsIgnoreEnd
 
@@ -40,9 +40,9 @@ class View {
 	}
 
 	/**
-	 * Render pre blog card template
+	 * Render pre blog card template.
 	 *
-	 * @param string $url
+	 * @param string $url Target URL.
 	 * @return string
 	 */
 	public static function get_pre_blog_card_template( $url ) {
@@ -71,9 +71,9 @@ class View {
 	}
 
 	/**
-	 * Return blog card template
+	 * Return blog card template.
 	 *
-	 * @param string $url
+	 * @param string $url Target URL.
 	 * @return string
 	 */
 	public static function get_template( $url ) {
@@ -97,9 +97,9 @@ class View {
 	}
 
 	/**
-	 * Return url template
+	 * Return url template.
 	 *
-	 * @param string $url
+	 * @param string $url Target URL.
 	 * @return string
 	 */
 	public static function get_url_template( $url ) {
@@ -118,10 +118,10 @@ class View {
 	}
 
 	/**
-	 * Return blog card template
+	 * Return blog card template.
 	 *
-	 * @param string $url
-	 * @param array $cache
+	 * @param string $url   Target URL.
+	 * @param array  $cache Cache of the target URL.
 	 * @return string
 	 */
 	public static function get_blog_card_template( $url, $cache ) {
@@ -172,9 +172,9 @@ class View {
 	}
 
 	/**
-	 * Remove newlines
+	 * Remove newlines.
 	 *
-	 * @param string $string
+	 * @param string $string The string.
 	 * @return string
 	 */
 	protected static function _strip_newlines( $string ) {

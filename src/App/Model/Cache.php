@@ -11,15 +11,60 @@ require_once( ABSPATH . 'wp-admin/includes/file.php' );
 
 class Cache {
 
+	/**
+	 * @var WP_Filesystem
+	 */
 	protected static $_wp_file_system;
 
+	/**
+	 * Set WP_Filesystem_Direct to $wp_filesystem.
+	 *
+	 * @return WP_Filesystem;
+	 */
 	protected static function _wp_filesystem() {
 		global $wp_filesystem;
 		static::$_wp_file_system = $wp_filesystem;
-		WP_Filesystem();
+
+		add_filter(
+			'filesystem_method',
+			[ '\Inc2734\WP_OEmbed_Blog_Card\App\Model\Cache', '_filesystem_method' ],
+			10,
+			3
+		);
+
+		WP_Filesystem( false, static::get_directory() );
+
+		remove_filter(
+			'filesystem_method',
+			[ '\Inc2734\WP_OEmbed_Blog_Card\App\Model\Cache', '_filesystem_method' ],
+			10,
+			3
+		);
+
 		return $wp_filesystem;
 	}
 
+	/**
+	 * Set WP_Filesystem_Direct to $wp_filesystem.
+	 *
+	 * @param string $method  Filesystem method to return.
+	 * @param array  $args    An array of connection details for the method.
+	 * @param string $context Full path to the directory that is tested for being writable.
+	 * @return string
+	 */
+	public static function _filesystem_method( $method, $args, $context ) {
+		if (
+			'direct' !== $method
+			&& untrailingslashit( static::get_directory() ) === untrailingslashit( $context )
+		) {
+			return 'direct';
+		}
+		return $method;
+	}
+
+	/**
+	 * Reset $wp_filesystem.
+	 */
 	protected static function _reset_wp_filesystem() {
 		global $wp_filesystem;
 		$wp_filesystem = static::$_wp_file_system; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
@@ -28,7 +73,7 @@ class Cache {
 	/**
 	 * Return the directory where the cache is stored.
 	 *
-	 * @param string|null $url
+	 * @param string|null $url Target URL.
 	 * @return string
 	 */
 	public static function get_directory( $url = null ) {
@@ -36,7 +81,7 @@ class Cache {
 		$directory  = path_join( $upload_dir['basedir'], 'wp-oembed-blog-card' );
 
 		if ( ! is_null( $url ) ) {
-			$host = parse_url( $url, PHP_URL_HOST );
+			$host      = parse_url( $url, PHP_URL_HOST );
 			$directory = path_join( $directory, $host );
 		}
 
@@ -54,6 +99,9 @@ class Cache {
 		return $directory;
 	}
 
+	/**
+	 * Remove directory.
+	 */
 	public static function rmdir() {
 		$filesystem = static::_wp_filesystem();
 		if ( $filesystem ) {
@@ -63,10 +111,10 @@ class Cache {
 	}
 
 	/**
-	 * Return cache
+	 * Return cache.
 	 *
-	 * @param string $url
-	 * @return array
+	 * @param string $url Target URL.
+	 * @return boolean
 	 */
 	public static function get( $url ) {
 		$filepath = static::_get_cache_filepath( $url );
@@ -74,7 +122,7 @@ class Cache {
 			return false;
 		}
 
-		$cache = false;
+		$cache      = false;
 		$filesystem = static::_wp_filesystem();
 		if ( $filesystem ) {
 			$cache = $filesystem->get_contents( $filepath );
@@ -86,6 +134,13 @@ class Cache {
 			: false;
 	}
 
+	/**
+	 * Return true when expired.
+	 *
+	 * @param string $url Target URL.
+	 * @param int    $expire Expire time (ms).
+	 * @return boolean
+	 */
 	public static function expired( $url, $expire = MINUTE_IN_SECONDS ) {
 		$cache = static::get( $url );
 		if ( ! $cache ) {
@@ -99,6 +154,12 @@ class Cache {
 		return true;
 	}
 
+	/**
+	 * Return true when broken.
+	 *
+	 * @param string $url Target URL.
+	 * @return boolean
+	 */
 	public static function broken( $url ) {
 		$cache = static::get( $url );
 		if ( ! $cache ) {
@@ -113,10 +174,10 @@ class Cache {
 	}
 
 	/**
-	 * Refresh cache
+	 * Refresh cache.
 	 *
-	 * @param string $url
-	 * @return void
+	 * @param string $url Target URL.
+	 * @return string
 	 */
 	public static function refresh( $url ) {
 		$parser = new Parser( $url );
@@ -133,7 +194,7 @@ class Cache {
 
 		delete_transient( static::_get_meta_key( $url ) ); // Delete old version cache.
 
-		$content = false;
+		$content    = false;
 		$filesystem = static::_wp_filesystem();
 		if ( $filesystem ) {
 			$filepath = static::_get_cache_filepath( $url );
@@ -147,11 +208,11 @@ class Cache {
 	}
 
 	/**
-	 * Get cache filename
+	 * Get cache filename.
 	 *
 	 * @see https://qiita.com/koriym/items/efc1c419e4b7772b65c0
 	 *
-	 * @param string $url
+	 * @param string $url Target URL.
 	 * @return string
 	 */
 	protected static function _get_cache_filepath( $url ) {
@@ -164,11 +225,11 @@ class Cache {
 	}
 
 	/**
-	 * Get post meta key for blog card
+	 * Get post meta key for blog card.
 	 *
 	 * @see https://qiita.com/koriym/items/efc1c419e4b7772b65c0
 	 *
-	 * @param string $url
+	 * @param string $url Target URL.
 	 * @return string
 	 */
 	protected static function _get_meta_key( $url ) {
