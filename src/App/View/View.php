@@ -24,12 +24,14 @@ class View {
 
 		// @codingStandardsIgnoreStart
 		$template .= sprintf(
-			'<link rel="stylesheet" href="%1$s">',
-			esc_url_raw( get_template_directory_uri() . '/vendor/inc2734/wp-oembed-blog-card/src/assets/css/gutenberg-embed.css' )
+			'<link rel="stylesheet" href="%1$s?ver=%2$s">',
+			esc_url_raw( get_template_directory_uri() . '/vendor/inc2734/wp-oembed-blog-card/src/assets/css/gutenberg-embed.css' ),
+			filemtime( get_template_directory() . '/vendor/inc2734/wp-oembed-blog-card/src/assets/css/gutenberg-embed.css' )
 		);
 		$template .= sprintf(
-			'<link rel="stylesheet" href="%1$s">',
-			esc_url_raw( get_template_directory_uri() . '/vendor/inc2734/wp-oembed-blog-card/src/assets/css/app.css' )
+			'<link rel="stylesheet" href="%1$s?ver=%2$s">',
+			esc_url_raw( get_template_directory_uri() . '/vendor/inc2734/wp-oembed-blog-card/src/assets/css/app.css' ),
+			filemtime( get_template_directory() . '/vendor/inc2734/wp-oembed-blog-card/src/assets/css/app.css' )
 		);
 		// @codingStandardsIgnoreEnd
 
