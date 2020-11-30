@@ -1,6 +1,6 @@
 # WP oEmbed Blog Card
 
-[![Build Status](https://travis-ci.org/inc2734/wp-oembed-blog-card.svg?branch=master)](https://travis-ci.org/inc2734/wp-oembed-blog-card)
+![CI](https://github.com/inc2734/wp-oembed-blog-card/workflows/CI/badge.svg)
 [![Latest Stable Version](https://poser.pugx.org/inc2734/wp-oembed-blog-card/v/stable)](https://packagist.org/packages/inc2734/wp-oembed-blog-card)
 [![License](https://poser.pugx.org/inc2734/wp-oembed-blog-card/license)](https://packagist.org/packages/inc2734/wp-oembed-blog-card)
 
