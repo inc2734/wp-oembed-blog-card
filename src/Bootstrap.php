@@ -220,6 +220,7 @@ class Bootstrap {
 			return false;
 		}
 
-		return false !== strpos( $_SERVER['REQUEST_URI'], '/wp-json/oembed/1.0/proxy?url=' );
+		return false !== strpos( $_SERVER['REQUEST_URI'], '/wp-json/oembed/1.0/proxy?url=' )
+				|| false !== strpos( $_SERVER['REQUEST_URI'], urlencode( '/oembed/1.0/proxy' ) );
 	}
 }
