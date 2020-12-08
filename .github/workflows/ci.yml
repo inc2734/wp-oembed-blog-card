@@ -4,7 +4,10 @@ on:
     paths-ignore:
     - '**.md'
   push:
-    branches: [master]
+    branches:
+    - '**'
+    tags:
+    - "!*"
     paths-ignore:
     - '**.md'
 
