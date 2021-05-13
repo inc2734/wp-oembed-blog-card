@@ -98,3 +98,20 @@ add_filter(
 	2
 );
 ```
+
+### inc2734_wp_oembed_blog_card_cache_directory
+
+```
+/**
+ * Customize cache directory
+ *
+ * @param string $directory
+ * @return string
+ */
+add_filter(
+	'inc2734_wp_oembed_blog_card_cache_directory',
+	function( $directory ) {
+		return $directory;
+	}
+);
+```

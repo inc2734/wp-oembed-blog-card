@@ -78,7 +78,8 @@ class Cache {
 	 */
 	public static function get_directory( $url = null ) {
 		$upload_dir = wp_upload_dir();
-		$directory  = path_join( $upload_dir['basedir'], 'wp-oembed-blog-card' );
+		$basedir    = apply_filters( 'inc2734_wp_oembed_blog_card_cache_directory', $upload_dir['basedir'] );
+		$directory  = path_join( $basedir, 'wp-oembed-blog-card' );
 
 		if ( ! is_null( $url ) ) {
 			$host      = parse_url( $url, PHP_URL_HOST );
