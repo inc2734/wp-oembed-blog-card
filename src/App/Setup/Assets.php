@@ -15,8 +15,8 @@ class Assets {
 	 * Constructor.
 	 */
 	public function __construct() {
-		add_action( 'wp_enqueue_scripts', [ $this, '_enqueue_scripts' ] );
-		add_action( 'wp_enqueue_scripts', [ $this, '_enqueue_styles' ] );
+		add_action( 'wp_enqueue_scripts', [ $this, '_enqueue_scripts' ], 9 );
+		add_action( 'wp_enqueue_scripts', [ $this, '_enqueue_styles' ], 9 );
 		add_action( 'enqueue_block_editor_assets', [ $this, '_enqueue_styles' ] );
 		add_action( 'after_setup_theme', [ $this, '_add_editor_style' ] );
 	}
