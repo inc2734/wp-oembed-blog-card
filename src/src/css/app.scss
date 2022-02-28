@@ -9,7 +9,7 @@
   overflow: hidden;
   transition: all _var-transition-duration() _var-transition-function-timing();
 
-  @include _hover(lg) {
+  @include _hover() {
     box-shadow: 0 1px 6px 0 rgba(#000, .1);
   }
 
