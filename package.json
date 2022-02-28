@@ -5,7 +5,7 @@
     "@inc2734/for-each-html-nodes": "^0.4.0",
     "@wordpress/browserslist-config": "^4.1.1",
     "@wordpress/env": "^4.2.2",
-    "@wordpress/scripts": "^22.0.1",
+    "@wordpress/scripts": "<20.0.0",
     "autoprefixer": "^10.4.2",
     "cpy-cli": "^3.1.1",
     "cssnano": "^5.0.17",
