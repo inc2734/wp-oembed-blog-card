@@ -115,3 +115,20 @@ add_filter(
 	}
 );
 ```
+
+### inc2734_wp_oembed_blog_card_cache_object
+
+```
+/**
+ * Change cache system.
+ *
+ * @param string $cache_object_class_name
+ * @return string
+ */
+add_filter(
+	'inc2734_wp_oembed_blog_card_cache_object',
+	function( $cache_object_class_name ) {
+		return $cache_object_class_name;
+	}
+);
+```
