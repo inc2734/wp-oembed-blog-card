@@ -29,7 +29,7 @@ class FileCache implements Cache {
 
 		add_filter(
 			'filesystem_method',
-			[ '\Inc2734\WP_OEmbed_Blog_Card\App\Model\FileCache', '_filesystem_method' ],
+			array( '\Inc2734\WP_OEmbed_Blog_Card\App\Model\FileCache', '_filesystem_method' ),
 			10,
 			3
 		);
@@ -38,7 +38,7 @@ class FileCache implements Cache {
 
 		remove_filter(
 			'filesystem_method',
-			[ '\Inc2734\WP_OEmbed_Blog_Card\App\Model\FileCache', '_filesystem_method' ],
+			array( '\Inc2734\WP_OEmbed_Blog_Card\App\Model\FileCache', '_filesystem_method' ),
 			10,
 			3
 		);

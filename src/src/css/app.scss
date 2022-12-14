@@ -77,15 +77,17 @@
   &__domain {
     margin-top: 15px;
     clear: both;
+    display: flex;
+    align-items: center;
     color: _var-color-gray();
     font-size: 12px;
     padding-top: 5px;
   }
 
   &__favicon {
-    position: relative;
-    top: -1px;
     height: 13px;
-    margin-right: 3px;
+    width: 13px;
+    object-fit: contain;
+    margin-right: 6px;
   }
 }

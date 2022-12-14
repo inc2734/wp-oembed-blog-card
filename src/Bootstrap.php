@@ -18,7 +18,7 @@ class Bootstrap {
 	 * Constructor.
 	 */
 	public function __construct() {
-		add_action( 'rest_api_init', [ $this, '_rest_api_init' ] );
+		add_action( 'rest_api_init', array( $this, '_rest_api_init' ) );
 
 		if ( $this->_is_admin_request() ) {
 			return false;
@@ -28,11 +28,11 @@ class Bootstrap {
 			return false;
 		}
 
-		add_filter( 'embed_oembed_html', [ $this, '_embed_html_for_wordpress' ], 9, 2 );
-		add_filter( 'embed_maybe_make_link', [ $this, '_embed_html_for_no_oembed' ], 9, 2 );
+		add_filter( 'embed_oembed_html', array( $this, '_embed_html_for_wordpress' ), 9, 2 );
+		add_filter( 'embed_maybe_make_link', array( $this, '_embed_html_for_no_oembed' ), 9, 2 );
 
 		if ( $this->_is_block_embed_rendering_request() ) {
-			add_filter( 'rest_request_after_callbacks', [ $this, '_block_filter_oembed_result' ], 11, 3 );
+			add_filter( 'rest_request_after_callbacks', array( $this, '_block_filter_oembed_result' ), 11, 3 );
 		} else {
 			new Setup\Assets();
 		}
@@ -45,7 +45,7 @@ class Bootstrap {
 		register_rest_route(
 			'wp-oembed-blog-card/v1',
 			'/response',
-			[
+			array(
 				'methods'             => 'GET',
 				'callback'            => function( $request ) {
 					$params = $request->get_params();
@@ -61,7 +61,7 @@ class Bootstrap {
 					die();
 				},
 				'permission_callback' => '__return_true',
-			]
+			)
 		);
 	}
 
@@ -127,15 +127,15 @@ class Bootstrap {
 		set_transient( $transient_name, $delay, 5 );
 
 		global $wp_embed;
-		$html = $wp_embed->shortcode( [], $_GET['url'] );
+		$html = $wp_embed->shortcode( array(), $_GET['url'] );
 		if ( ! $html ) {
 			return $response;
 		}
 
-		return [
+		return array(
 			'provider_name' => 'wp-oembed-blog-card',
 			'html'          => $html,
-		];
+		);
 	}
 
 	/**

@@ -30,7 +30,7 @@ class Requester {
 	 *
 	 * @var array
 	 */
-	protected $response = [];
+	protected $response = array();
 
 	/**
 	 * Constructor.
@@ -75,10 +75,10 @@ class Requester {
 
 		$this->response = wp_remote_get(
 			$this->url,
-			[
+			array(
 				'timeout'    => 10,
 				'user-agent' => $this->user_agent,
-			]
+			)
 		);
 
 		wp_cache_set( $cache_key, $this->response, $cache_group );

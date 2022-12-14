@@ -86,7 +86,7 @@ class Cache {
 	public static function refresh( $url ) {
 		$parser = new Parser( $url );
 
-		$cache = [
+		$cache = array(
 			'permalink'   => $parser->get_permalink(),
 			'thumbnail'   => $parser->get_thumbnail(),
 			'title'       => $parser->get_title(),
@@ -94,7 +94,7 @@ class Cache {
 			'favicon'     => $parser->get_favicon(),
 			'domain'      => $parser->get_domain(),
 			'cached_time' => time(),
-		];
+		);
 
 		delete_transient( static::_get_meta_key( $url ) ); // Delete old version cache.
 
