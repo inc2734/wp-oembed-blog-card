@@ -16,32 +16,30 @@ class Assets {
 	 */
 	public function __construct() {
 		add_action( 'wp_enqueue_scripts', array( $this, '_enqueue_scripts' ), 9 );
-		add_action( 'wp_enqueue_scripts', array( $this, '_enqueue_styles' ), 9 );
-		add_action( 'enqueue_block_editor_assets', array( $this, '_enqueue_styles' ) );
-		add_action( 'after_setup_theme', array( $this, '_add_editor_style' ) );
+		add_action( 'enqueue_block_assets', array( $this, '_enqueue_block_assets' ), 9 );
+		add_action( 'enqueue_block_editor_assets', array( $this, '_enqueue_block_editor_assets' ) );
 	}
 
 	/**
 	 * Add editor style
 	 */
-	public function _add_editor_style() {
-		add_editor_style(
-			array(
-				'vendor/inc2734/wp-oembed-blog-card/src/assets/css/app.css',
-			)
-		);
-	}
+	// public function _add_editor_style() {
+	// 	add_editor_style(
+	// 		array(
+	// 			'vendor/inc2734/wp-oembed-blog-card/src/assets/css/app.css',
+	// 		)
+	// 	);
+	// }
 
 	/**
 	 * Enqueue scripts
 	 */
 	public function _enqueue_scripts() {
-		$relative_path = '/vendor/inc2734/wp-oembed-blog-card/src/assets/js/app.js';
 		wp_enqueue_script(
 			'wp-oembed-blog-card',
-			get_template_directory_uri() . $relative_path,
+			get_template_directory_uri() . '/vendor/inc2734/wp-oembed-blog-card/src/assets/js/app.js',
 			array(),
-			filemtime( get_template_directory() . $relative_path ),
+			filemtime( get_template_directory() . '/vendor/inc2734/wp-oembed-blog-card/src/assets/js/app.js' ),
 			true
 		);
 
@@ -55,17 +53,27 @@ class Assets {
 	}
 
 	/**
-	 * Enqueue styles
-	 *
-	 * @return void
+	 * Enqueue assets
 	 */
-	public function _enqueue_styles() {
-		$relative_path = '/vendor/inc2734/wp-oembed-blog-card/src/assets/css/app.css';
+	public function _enqueue_block_assets() {
 		wp_enqueue_style(
 			'wp-oembed-blog-card',
-			get_template_directory_uri() . $relative_path,
+			get_template_directory_uri() . '/vendor/inc2734/wp-oembed-blog-card/src/assets/css/app.css',
 			array(),
-			filemtime( get_template_directory() . $relative_path )
+			filemtime( get_template_directory() . '/vendor/inc2734/wp-oembed-blog-card/src/assets/css/app.css' )
+		);
+	}
+
+	/**
+	 * Enqueue assets for editor.
+	 */
+	public function _enqueue_block_editor_assets() {
+		$dependencies = include( get_template_directory() . '/vendor/inc2734/wp-oembed-blog-card/src/assets/js/editor.asset.php' );
+		wp_enqueue_script(
+			'wp-oembed-blog-card@editor',
+			get_template_directory_uri() . '/vendor/inc2734/wp-oembed-blog-card/src/assets/js/editor.js',
+			$dependencies['dependencies'],
+			filemtime( get_template_directory() . '/vendor/inc2734/wp-oembed-blog-card/src/assets/js/editor.js' )
 		);
 	}
 }

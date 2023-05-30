@@ -25,11 +25,6 @@ class View {
 		// @codingStandardsIgnoreStart
 		$template .= sprintf(
 			'<link rel="stylesheet" href="%1$s?ver=%2$s">',
-			esc_url_raw( get_template_directory_uri() . '/vendor/inc2734/wp-oembed-blog-card/src/assets/css/gutenberg-embed.css' ),
-			filemtime( get_template_directory() . '/vendor/inc2734/wp-oembed-blog-card/src/assets/css/gutenberg-embed.css' )
-		);
-		$template .= sprintf(
-			'<link rel="stylesheet" href="%1$s?ver=%2$s">',
 			esc_url_raw( get_template_directory_uri() . '/vendor/inc2734/wp-oembed-blog-card/src/assets/css/app.css' ),
 			filemtime( get_template_directory() . '/vendor/inc2734/wp-oembed-blog-card/src/assets/css/app.css' )
 		);
@@ -145,23 +140,25 @@ class View {
 					</div>
 				<?php endif; ?>
 				<div class="wp-oembed-blog-card__body">
-					<div class="wp-oembed-blog-card__title">
-						<?php echo esc_html( $cache['title'] ); ?>
-					</div>
-					<div class="wp-oembed-blog-card__description">
-						<?php
-						if ( function_exists( 'mb_strimwidth' ) ) {
-							echo esc_html( mb_strimwidth( $cache['description'], 0, 160, '…', 'utf-8' ) );
-						} else {
-							echo esc_html( $cache['description'] );
-						}
-						?>
+					<div class="wp-oembed-blog-card__content">
+						<div class="wp-oembed-blog-card__title">
+							<?php echo esc_html( $cache['title'] ); ?>
+						</div>
+						<div class="wp-oembed-blog-card__description">
+							<?php
+							if ( function_exists( 'mb_strimwidth' ) ) {
+								echo esc_html( mb_strimwidth( $cache['description'], 0, 160, '…', 'utf-8' ) );
+							} else {
+								echo esc_html( $cache['description'] );
+							}
+							?>
+						</div>
 					</div>
 					<div class="wp-oembed-blog-card__domain">
 						<?php if ( $cache['favicon'] ) : ?>
 							<img class="wp-oembed-blog-card__favicon" src="<?php echo esc_url( $cache['favicon'] ); ?>" alt="">
 						<?php endif; ?>
-						<?php echo esc_html( $cache['domain'] ); ?>
+						<span class="wp-oembed-blog-card__domain-text"><?php echo esc_html( $cache['domain'] ); ?></span>
 					</div>
 				</div>
 			</a>
