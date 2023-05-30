@@ -27,7 +27,7 @@
     "format:js": "wp-scripts format src/src/js",
     "format": "run-p format:*",
     "pretest:unit:php": "wp-env start && npm run composer 'install --no-interaction'",
-    "test:lint:php": "npm run composer run-script lint",
+    "test:lint:php": "wp-env start && npm run composer 'run-script lint'",
     "test:lint": "run-s test:lint:*",
     "test:unit:php": "wp-env start && wp-env run --env-cwd=\"wp-content/plugins/wp-oembed-blog-card\" tests-wordpress vendor/bin/phpunit -c .phpunit.xml.dist --verbose",
     "test:unit": "run-s test:unit:*",
