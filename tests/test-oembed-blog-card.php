@@ -30,7 +30,7 @@ class OEmbed_Blog_Card_Test extends WP_UnitTestCase {
 		new Inc2734\WP_OEmbed_Blog_Card\Bootstrap();
 
 		$this->assertEquals(
-			'<p><iframe loading="lazy" title="Snow Monkey ミートアップ 〜Snow Monkey について考える会〜" width="500" height="281" src="https://www.youtube.com/embed/s2tDDSBAHsQ?feature=oembed" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></p>',
+			'<p><iframe loading="lazy" title="Snow Monkey ミートアップ 〜Snow Monkey について考える会〜" width="500" height="281" src="https://www.youtube.com/embed/s2tDDSBAHsQ?feature=oembed" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>',
 			trim( apply_filters( 'the_content', '[embed]https://www.youtube.com/watch?v=s2tDDSBAHsQ[/embed]' ) )
 		);
 	}
