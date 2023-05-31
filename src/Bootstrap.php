@@ -33,9 +33,9 @@ class Bootstrap {
 
 		if ( $this->_is_block_embed_rendering_request() ) {
 			add_filter( 'rest_request_after_callbacks', array( $this, '_block_filter_oembed_result' ), 11, 3 );
-		} else {
-			new Setup\Assets();
 		}
+
+		new Setup\Assets();
 	}
 
 	/**

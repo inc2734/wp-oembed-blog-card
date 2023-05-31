@@ -11,7 +11,7 @@
 	--wp-oembed-blog-card--figure--aspect-ratio: 4 / 3;
 	--wp-oembed-blog-card--body--min-width: 60%;
 
-	.wp-block-embed__wrapper {
+	.wp-block-embed__wrapper:where(:not(.is-provider-wp-oembed-blog-card)) {
 		background-color: var(--wp-oembed-blog-card--background-color);
 		border: var(--wp-oembed-blog-card--border);
 		box-shadow: var(--wp-oembed-blog-card--box-shadow);
@@ -42,6 +42,7 @@
 			img {
 				aspect-ratio: var(--wp-oembed-blog-card--figure--aspect-ratio);
 				object-fit: cover;
+				object-position: 50% 50%;
 				height: 100%;
 				width: 100%;
 			}
