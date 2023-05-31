@@ -22,13 +22,16 @@ class View {
 		$template = str_replace( '<a ', '<span ', $template );
 		$template = str_replace( '</a>', '</span>', $template );
 
-		// @codingStandardsIgnoreStart
-		$template .= sprintf(
-			'<link rel="stylesheet" href="%1$s?ver=%2$s">',
-			esc_url_raw( get_template_directory_uri() . '/vendor/inc2734/wp-oembed-blog-card/src/assets/css/app.css' ),
-			filemtime( get_template_directory() . '/vendor/inc2734/wp-oembed-blog-card/src/assets/css/app.css' )
+		$styles = array(
+			get_template_directory_uri() . '/vendor/inc2734/wp-oembed-blog-card/src/assets/css/app.css?ver=' . filemtime( get_template_directory() . '/vendor/inc2734/wp-oembed-blog-card/src/assets/css/app.css' ),
 		);
-		// @codingStandardsIgnoreEnd
+		$styles = apply_filters( 'inc2734_wp_oembed_blog_card_block_editor_styles', $styles );
+		foreach ( $styles as $style ) {
+			$template .= sprintf(
+				'<link rel="stylesheet" href="%1$s">',
+				esc_url_raw( $style )
+			);
+		}
 
 		$template = apply_filters( 'wp_oembed_blog_card_gutenberg_template', $template, $url ); // @deprecated
 		$template = apply_filters( 'inc2734_wp_oembed_blog_card_block_editor_template', $template, $url );

@@ -132,3 +132,20 @@ add_filter(
 	}
 );
 ```
+
+### inc2734_wp_oembed_blog_card_block_editor_styles
+
+```
+/**
+ * Add stylesheets for block editor.
+ *
+ * @param array $styles URIs of styles.
+ * @return array
+ */
+add_filter(
+	'inc2734_wp_oembed_blog_card_block_editor_styles',
+	function( $styles ) {
+		return $styles;
+	}
+);
+```
