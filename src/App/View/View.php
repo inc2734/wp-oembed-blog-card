@@ -53,7 +53,7 @@ class View {
 
 		ob_start();
 		?>
-		<div class="js-wp-oembed-blog-card">
+		<div class="js-wp-oembed-blog-card wp-oembed-blog-card">
 			<a class="js-wp-oembed-blog-card__link" href="%1$s" target="%2$s">
 				<div class="wp-oembed-blog-card__body">
 					<div class="wp-oembed-blog-card__content">
