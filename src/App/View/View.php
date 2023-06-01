@@ -25,7 +25,13 @@ class View {
 		$template = apply_filters( 'wp_oembed_blog_card_gutenberg_template', $template, $url ); // @deprecated
 		$template = apply_filters( 'inc2734_wp_oembed_blog_card_block_editor_template', $template, $url );
 
-		return static::_strip_newlines( $template );
+		ob_start();
+		?>
+		<div style="display: none"><?php wp_head(); ?></div>
+		<?php
+		$head = ob_get_clean();
+
+		return $head . static::_strip_newlines( $template );
 	}
 
 	/**
@@ -124,8 +130,6 @@ class View {
 
 		ob_start();
 		?>
-		<div style="display: none"><?php wp_head(); ?></div>
-
 		<div class="wp-oembed-blog-card" data-cached-time="<?php echo esc_attr( $cached_time ); ?>">
 			<a href="<?php echo esc_url( $url ); ?>" target="<?php echo esc_attr( $target ); ?>">
 				<?php if ( $cache['thumbnail'] ) : ?>
