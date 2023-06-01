@@ -23,6 +23,10 @@
 }
 
 @mixin wp-oembed-blog-card() {
+	&.wp-oembed-blog-card-url-template {
+		--wp-oembed-blog-card--direction: row;
+	}
+
 	> a,
 	> span {
 		display: flex;
@@ -67,8 +71,11 @@
 	}
 
 	&__description {
-		margin-top: 1em;
 		font-size: .9em;
+	}
+
+	> & + &__description {
+		margin-top: 1em;
 	}
 
 	&__domain {

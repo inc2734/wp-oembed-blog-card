@@ -54,7 +54,15 @@ class View {
 		ob_start();
 		?>
 		<div class="js-wp-oembed-blog-card">
-			<a class="js-wp-oembed-blog-card__link" href="%1$s" target="%2$s">%1$s</a>
+			<a class="js-wp-oembed-blog-card__link" href="%1$s" target="%2$s">
+				<div class="wp-oembed-blog-card__body">
+					<div class="wp-oembed-blog-card__content">
+						<div class="wp-oembed-blog-card__description">
+							%1$s
+						</div>
+					</div>
+				</div>
+			</a>
 		</div>
 		<?php
 		$template = ob_get_clean();
@@ -100,9 +108,17 @@ class View {
 	public static function get_url_template( $url ) {
 		ob_start();
 		?>
-		<p class="wp-oembed-blog-card-url-template">
-			<a href="%1$s" target="_blank">%1$s</a>
-		</p>
+		<div class="wp-oembed-blog-card-url-template wp-oembed-blog-card">
+			<a href="%1$s" target="_blank">
+				<div class="wp-oembed-blog-card__body">
+					<div class="wp-oembed-blog-card__content">
+						<div class="wp-oembed-blog-card__description">
+							%1$s
+						</div>
+					</div>
+				</div>
+			</a>
+		</div>
 		<?php
 		$template = ob_get_clean();
 		$template = sprintf( $template, $url );
