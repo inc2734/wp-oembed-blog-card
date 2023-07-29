@@ -40,7 +40,10 @@ class Assets {
 			get_template_directory_uri() . '/vendor/inc2734/wp-oembed-blog-card/src/assets/js/app.js',
 			array(),
 			filemtime( get_template_directory() . '/vendor/inc2734/wp-oembed-blog-card/src/assets/js/app.js' ),
-			true
+			array(
+				'in_footer' => false,
+				'strategy'  => 'defer',
+			)
 		);
 
 		wp_localize_script(
@@ -74,6 +77,10 @@ class Assets {
 			get_template_directory_uri() . '/vendor/inc2734/wp-oembed-blog-card/src/assets/js/editor.js',
 			$dependencies['dependencies'],
 			filemtime( get_template_directory() . '/vendor/inc2734/wp-oembed-blog-card/src/assets/js/editor.js' )
+			array(
+				'in_footer' => false,
+				'strategy'  => 'defer',
+			)
 		);
 	}
 }
