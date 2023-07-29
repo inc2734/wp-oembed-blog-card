@@ -76,7 +76,7 @@ class Assets {
 			'wp-oembed-blog-card@editor',
 			get_template_directory_uri() . '/vendor/inc2734/wp-oembed-blog-card/src/assets/js/editor.js',
 			$dependencies['dependencies'],
-			filemtime( get_template_directory() . '/vendor/inc2734/wp-oembed-blog-card/src/assets/js/editor.js' )
+			filemtime( get_template_directory() . '/vendor/inc2734/wp-oembed-blog-card/src/assets/js/editor.js' ),
 			array(
 				'in_footer' => false,
 				'strategy'  => 'defer',
