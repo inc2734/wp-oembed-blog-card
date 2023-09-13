@@ -95,7 +95,7 @@
 
 .is-provider-wp-oembed-blog-card,
 .is-provider-wp-oembed-blog-card-handler,
-.wp-block-embed:not([class*="is-provider-"]) {
+.wp-block-embed:not([class*="is-provider-"]):not([data-type="core/embed"]) {
 	@include custom-properties();
 
 	.wp-block-embed__wrapper:where(:not(.is-provider-wp-oembed-blog-card)) {
