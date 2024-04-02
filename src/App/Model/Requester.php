@@ -40,13 +40,17 @@ class Requester {
 	public function __construct( $url ) {
 		$this->url = $url;
 
-		$remote_addr = isset( $_SERVER['REMOTE_ADDR'] ) ? wp_unslash( $_SERVER['REMOTE_ADDR'] ) : null; // WPCS: sanitization ok.
-		$server_addr = isset( $_SERVER['SERVER_ADDR'] ) ? wp_unslash( $_SERVER['SERVER_ADDR'] ) : null; // WPCS: sanitization ok.
+		$remote_addr     = filter_input( INPUT_SERVER, 'REMOTE_ADDR' );
+		$server_addr     = filter_input( INPUT_SERVER, 'SERVER_ADDR' );
+		$http_user_agent = filter_input( INPUT_SERVER, 'HTTP_USER_AGENT' );
 
-		if ( empty( $_SERVER['HTTP_USER_AGENT'] ) || $remote_addr === $server_addr ) {
+		$remote_addr = $remote_addr ? wp_unslash( $remote_addr ) : null; // WPCS: sanitization ok.
+		$server_addr = $server_addr ? wp_unslash( $server_addr ) : null; // WPCS: sanitization ok.
+
+		if ( ! $http_user_agent || $remote_addr === $server_addr ) {
 			$user_agent = 'WordPress/' . get_bloginfo( 'version' ) . '; ' . get_bloginfo( 'url' );
 		} else {
-			$user_agent = sanitize_text_field( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ) );
+			$user_agent = sanitize_text_field( wp_unslash( $http_user_agent ) );
 		}
 
 		$this->user_agent = apply_filters( 'http_headers_useragent', $user_agent );
@@ -65,7 +69,7 @@ class Requester {
 			);
 		}
 
-		$cache_key   = md5( json_encode( $this->url ) );
+		$cache_key   = md5( wp_json_encode( $this->url ) );
 		$cache_group = 'inc2734/wp-oembed-blog-card/request';
 		$cache       = wp_cache_get( $cache_key, $cache_group );
 		if ( false !== $cache ) {

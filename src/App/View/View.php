@@ -187,10 +187,10 @@ class View {
 	/**
 	 * Remove newlines.
 	 *
-	 * @param string $string The string.
+	 * @param string $value The string.
 	 * @return string
 	 */
-	protected static function _strip_newlines( $string ) {
-		return str_replace( array( "\r", "\n", "\t" ), '', $string );
+	protected static function _strip_newlines( $value ) {
+		return str_replace( array( "\r", "\n", "\t" ), '', $value );
 	}
 }

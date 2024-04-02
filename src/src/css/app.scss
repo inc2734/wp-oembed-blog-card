@@ -93,9 +93,13 @@
 	}
 }
 
-.is-provider-wp-oembed-blog-card,
-.is-provider-wp-oembed-blog-card-handler,
-.wp-block-embed:not([class*="is-provider-"]):not([data-type="core/embed"]) {
+// @todo snow-monkey unitone 両方で確認すること
+:where(
+	.is-provider-wp-oembed-blog-card,
+	.is-provider-wp-oembed-blog-card-handler,
+	.wp-block-embed:not([class*="is-provider-"]):not([data-type="core/embed"]),
+	[data-resizable-iframe-connected] > div > .wp-oembed-blog-card
+) {
 	@include custom-properties();
 
 	.wp-block-embed__wrapper:where(:not(.is-provider-wp-oembed-blog-card)) {

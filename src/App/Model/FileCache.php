@@ -9,14 +9,14 @@ namespace Inc2734\WP_OEmbed_Blog_Card\App\Model;
 
 use Inc2734\WP_OEmbed_Blog_Card\App\Contract\Cache;
 
-require_once( ABSPATH . 'wp-admin/includes/file.php' );
+require_once ABSPATH . 'wp-admin/includes/file.php';
 
 class FileCache implements Cache {
 
 	/**
 	 * @var WP_Filesystem
 	 */
-	protected static $_wp_file_system;
+	protected static $wp_file_system;
 
 	/**
 	 * Set WP_Filesystem_Direct to $wp_filesystem.
@@ -25,7 +25,7 @@ class FileCache implements Cache {
 	 */
 	protected static function _wp_filesystem() {
 		global $wp_filesystem;
-		static::$_wp_file_system = $wp_filesystem;
+		static::$wp_file_system = $wp_filesystem;
 
 		add_filter(
 			'filesystem_method',
@@ -69,7 +69,7 @@ class FileCache implements Cache {
 	 */
 	protected static function _reset_wp_filesystem() {
 		global $wp_filesystem;
-		$wp_filesystem = static::$_wp_file_system; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+		$wp_filesystem = static::$wp_file_system; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 	}
 
 	/**
@@ -84,7 +84,7 @@ class FileCache implements Cache {
 		$directory  = path_join( $basedir, 'wp-oembed-blog-card' );
 
 		if ( ! is_null( $url ) ) {
-			$host      = parse_url( $url, PHP_URL_HOST );
+			$host      = wp_parse_url( $url, PHP_URL_HOST );
 			$directory = path_join( $directory, $host );
 		}
 
@@ -95,7 +95,7 @@ class FileCache implements Cache {
 			}
 		}
 
-		if ( ! is_writable( $directory ) ) {
+		if ( ! wp_is_writable( $directory ) ) {
 			return false;
 		}
 
@@ -167,7 +167,7 @@ class FileCache implements Cache {
 		if ( $filesystem ) {
 			$filepath = static::_get_cache_filepath( $url );
 			if ( $filepath ) {
-				$content = $filesystem->put_contents( $filepath, json_encode( $cache ) );
+				$content = $filesystem->put_contents( $filepath, wp_json_encode( $cache ) );
 			}
 		}
 		static::_reset_wp_filesystem();

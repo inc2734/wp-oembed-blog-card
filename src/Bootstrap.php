@@ -10,7 +10,7 @@ namespace Inc2734\WP_OEmbed_Blog_Card;
 use Inc2734\WP_OEmbed_Blog_Card\App\Model\Cache;
 use Inc2734\WP_OEmbed_Blog_Card\App\View\View;
 use Inc2734\WP_OEmbed_Blog_Card\App\Setup;
-use \WP_Error;
+use WP_Error;
 
 class Bootstrap {
 
@@ -21,11 +21,11 @@ class Bootstrap {
 		add_action( 'rest_api_init', array( $this, '_rest_api_init' ) );
 
 		if ( $this->_is_admin_request() ) {
-			return false;
+			return;
 		}
 
 		if ( $this->_is_wordpress_request() ) {
-			return false;
+			return;
 		}
 
 		add_filter( 'embed_oembed_html', array( $this, '_embed_html_for_wordpress' ), 9, 2 );
@@ -47,7 +47,7 @@ class Bootstrap {
 			'/response',
 			array(
 				'methods'             => 'GET',
-				'callback'            => function( $request ) {
+				'callback'            => function ( $request ) {
 					$params = $request->get_params();
 					if ( empty( $params['url'] ) ) {
 						return new WP_Error( 404, __( 'URL not found', 'inc2734-wp-oembed-blog-card' ) );
@@ -114,7 +114,8 @@ class Bootstrap {
 			}
 		}
 
-		if ( empty( $_GET['url'] ) ) {
+		$url = filter_input( INPUT_GET, 'url' );
+		if ( ! $url ) {
 			return $response;
 		}
 
@@ -123,11 +124,13 @@ class Bootstrap {
 		if ( 0 < $delay ) {
 			sleep( $delay );
 		}
-		$delay ++;
+		++$delay;
 		set_transient( $transient_name, $delay, 5 );
 
 		global $wp_embed;
-		$html = $wp_embed->shortcode( array(), $_GET['url'] );
+
+		$url  = filter_input( INPUT_GET, 'url' );
+		$html = $wp_embed->shortcode( array(), $url );
 		if ( ! $html ) {
 			return $response;
 		}
@@ -146,7 +149,7 @@ class Bootstrap {
 	 */
 	protected function _render( $url ) {
 		if ( ! is_admin() ) {
-			// When paste URL to the editor
+			// When paste URL to the editor.
 			if ( $this->_is_block_embed_rendering_request() ) {
 				if ( ! Cache::get( $url ) || ( Cache::broken( $url ) && Cache::expired( $url ) ) ) {
 					Cache::refresh( $url );
@@ -161,7 +164,7 @@ class Bootstrap {
 			return View::get_template( $url );
 		}
 
-		// When open the editor
+		// When open the editor.
 		if ( Cache::expired( $url ) ) {
 			Cache::refresh( $url );
 		}
@@ -174,11 +177,12 @@ class Bootstrap {
 	 * @return boolean
 	 */
 	protected function _is_wordpress_request() {
-		if ( ! isset( $_SERVER['HTTP_USER_AGENT'] ) ) {
+		$http_user_agent = filter_input( INPUT_SERVER, 'HTTP_USER_AGENT' );
+		if ( ! $http_user_agent ) {
 			return false;
 		}
 
-		$user_agent = wp_unslash( $_SERVER['HTTP_USER_AGENT'] ); // WPCS: sanitization ok.
+		$user_agent = wp_unslash( $http_user_agent ); // WPCS: sanitization ok.
 
 		return 0 === strpos( $user_agent, 'WordPress' );
 	}
@@ -189,11 +193,12 @@ class Bootstrap {
 	 * @return boolean
 	 */
 	protected function _is_admin_request() {
-		if ( ! isset( $_SERVER['REQUEST_URI'] ) ) {
+		$request_uri = filter_input( INPUT_SERVER, 'REQUEST_URI' );
+		if ( ! $request_uri ) {
 			return false;
 		}
 
-		$request_uri = wp_unslash( $_SERVER['REQUEST_URI'] ); // WPCS: sanitization ok.
+		$request_uri = wp_unslash( $request_uri ); // WPCS: sanitization ok.
 
 		if ( false !== strpos( $request_uri, '/wp-admin/admin-ajax.php' ) ) {
 			return false === strpos( $request_uri, 'action=wp_oembed_blog_card_render' );
@@ -216,11 +221,13 @@ class Bootstrap {
 	 * @return boolean
 	 */
 	protected function _is_block_embed_rendering_request() {
-		if ( ! isset( $_SERVER['REQUEST_URI'] ) ) {
+		$reuest_uri = filter_input( INPUT_SERVER, 'REQUEST_URI' );
+
+		if ( ! $reuest_uri ) {
 			return false;
 		}
 
-		return false !== strpos( $_SERVER['REQUEST_URI'], '/wp-json/oembed/1.0/proxy?url=' )
-				|| false !== strpos( $_SERVER['REQUEST_URI'], urlencode( '/oembed/1.0/proxy' ) );
+		return false !== strpos( $reuest_uri, '/wp-json/oembed/1.0/proxy?url=' )
+				|| false !== strpos( $reuest_uri, rawurlencode( '/oembed/1.0/proxy' ) );
 	}
 }

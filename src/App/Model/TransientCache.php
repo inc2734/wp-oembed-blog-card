@@ -35,7 +35,7 @@ class TransientCache implements Cache {
 	 */
 	public static function refresh( $url, $cache ) {
 		$key     = static::_get_meta_key( $url );
-		$content = json_encode( $cache );
+		$content = wp_json_encode( $cache );
 		$success = set_transient( $key, $content, 365 * DAY_IN_SECONDS );
 		return $success ? $content : false;
 	}
@@ -49,7 +49,9 @@ class TransientCache implements Cache {
 	 * @return string
 	 */
 	protected static function _get_meta_key( $url ) {
+		// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
 		$hash = base64_encode( pack( 'H*', sha1( $url ) ) );
+		// phpcs:enable
 		return '_wpoembc2_' . $hash;
 	}
 }

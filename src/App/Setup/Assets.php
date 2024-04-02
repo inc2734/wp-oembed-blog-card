@@ -21,18 +21,7 @@ class Assets {
 	}
 
 	/**
-	 * Add editor style
-	 */
-	// public function _add_editor_style() {
-	// 	add_editor_style(
-	// 		array(
-	// 			'vendor/inc2734/wp-oembed-blog-card/src/assets/css/app.css',
-	// 		)
-	// 	);
-	// }
-
-	/**
-	 * Enqueue scripts
+	 * Enqueue scripts.
 	 */
 	public function _enqueue_scripts() {
 		wp_enqueue_script(
@@ -71,7 +60,7 @@ class Assets {
 	 * Enqueue assets for editor.
 	 */
 	public function _enqueue_block_editor_assets() {
-		$dependencies = include( get_template_directory() . '/vendor/inc2734/wp-oembed-blog-card/src/assets/js/editor.asset.php' );
+		$dependencies = include get_template_directory() . '/vendor/inc2734/wp-oembed-blog-card/src/assets/js/editor.asset.php';
 		wp_enqueue_script(
 			'wp-oembed-blog-card@editor',
 			get_template_directory_uri() . '/vendor/inc2734/wp-oembed-blog-card/src/assets/js/editor.js',

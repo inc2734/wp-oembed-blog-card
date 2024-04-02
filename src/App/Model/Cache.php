@@ -7,7 +7,7 @@
 
 namespace Inc2734\WP_OEmbed_Blog_Card\App\Model;
 
-require_once( ABSPATH . 'wp-admin/includes/file.php' );
+require_once ABSPATH . 'wp-admin/includes/file.php';
 
 class Cache {
 
@@ -20,7 +20,7 @@ class Cache {
 	protected static function _get_cache_object() {
 		$class = apply_filters( 'inc2734_wp_oembed_blog_card_cache_object', '\Inc2734\WP_OEmbed_Blog_Card\App\Model\FileCache' );
 		if ( $class instanceof Cache ) {
-			throw new \RuntimeException( sprintf( '[inc2734/wp-oembed-blog-card] Invalid cache object: %1$s.', $class ) );
+			throw new \RuntimeException( esc_html( sprintf( '[inc2734/wp-oembed-blog-card] Invalid cache object: %1$s.', $class ) ) );
 		}
 		return $class;
 	}
@@ -111,7 +111,9 @@ class Cache {
 	 * @return string
 	 */
 	protected static function _get_meta_key( $url ) {
+		// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
 		$hash = base64_encode( pack( 'H*', sha1( $url ) ) );
+		// phpcs:enable
 		return '_wpoembc_' . $hash;
 	}
 }
