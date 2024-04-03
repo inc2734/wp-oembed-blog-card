@@ -7,6 +7,7 @@
 	--wp-oembed-blog-card--direction: row-reverse;
 	--wp-oembed-blog-card--gap: 1em;
 	--wp-oembed-blog-card--padding: 1em;
+	--wp-oembed-blog-card--content--gap: .5em;
 	--wp-oembed-blog-card--figure--basis: min(35%, 200px);
 	--wp-oembed-blog-card--figure--aspect-ratio: 4 / 3;
 	--wp-oembed-blog-card--body--min-width: 60%;
@@ -64,6 +65,10 @@
 	&__content {
 		margin-top: auto;
 		margin-bottom: auto;
+
+		> * + * {
+			margin-top: var(--wp-oembed-blog-card--content--gap);
+		}
 	}
 
 	&__title {
@@ -72,10 +77,6 @@
 
 	&__description {
 		font-size: .9em;
-	}
-
-	> & + &__description {
-		margin-top: 1em;
 	}
 
 	&__domain {
@@ -93,28 +94,21 @@
 	}
 }
 
-:where(
-	.is-provider-wp-oembed-blog-card,
-	.is-provider-wp-oembed-blog-card-handler,
-	.wp-block-embed:not([class*="is-provider-"]):not([data-type="core/embed"]),
-	[data-resizable-iframe-connected] > div > .wp-oembed-blog-card
-) {
-	@include custom-properties();
-
-	.wp-block-embed__wrapper:where(:not(.is-provider-wp-oembed-blog-card)) {
-		@include wrapper();
-	}
-
-	.wp-oembed-blog-card {
-		@include wp-oembed-blog-card();
-	}
-}
-
-// For classic editor made.
-:not(.wp-block-embed__wrapper) > .wp-oembed-blog-card {
+.is-provider-wp-oembed-blog-card .wp-block-embed__wrapper,
+.wp-oembed-blog-card {
 	@include custom-properties();
 	@include wrapper();
+}
+
+.wp-oembed-blog-card {
 	@include wp-oembed-blog-card();
+}
+
+.is-provider-wp-oembed-blog-card {
+	.components-sandbox {
+		pointer-events: none;
+		vertical-align: top;
+	}
 }
 
 // @todo WordPress 5.9 iframed content hack.

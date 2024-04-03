@@ -27,7 +27,12 @@ class View {
 
 		ob_start();
 		?>
-		<div style="display: none"><?php wp_head(); ?></div>
+		<div style="display: none">
+			<?php
+			wp_enqueue_scripts();
+			wp_print_styles();
+			?>
+		</div>
 		<?php
 		$head = ob_get_clean();
 
