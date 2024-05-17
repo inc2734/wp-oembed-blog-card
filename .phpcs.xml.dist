@@ -63,14 +63,6 @@
 		</properties>
 	</rule>
 
-	<rule ref="WordPress.WP.Capabilities">
-		<properties>
-			<property name="custom_capabilities" type="array">
-				<element value="customer"/>
-			</property>
-		</properties>
-	</rule>
-
 	<!-- What to scan -->
 	<file>.</file>
 	<exclude-pattern>/vendor/*</exclude-pattern>

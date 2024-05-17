@@ -11,22 +11,25 @@
 	--wp-oembed-blog-card--figure--basis: min(33%, 200px);
 	--wp-oembed-blog-card--figure--aspect-ratio: 4 / 3;
 	--wp-oembed-blog-card--body--min-width: 60%;
+	--wp-oembed-blog-card--transition-duration: .2s;
+	--wp-oembed-blog-card--transition-function-timing: ease-out;
 }
 
 @mixin wrapper() {
 	background-color: var(--wp-oembed-blog-card--background-color);
-	border: var(--wp-oembed-blog-card--border);
 	box-shadow: var(--wp-oembed-blog-card--box-shadow);
 	border-radius: var(--wp-oembed-blog-card--border-radius);
 	color: var(--wp-oembed-blog-card--color);
 	overflow: hidden;
-	transition: all var(--_global--transition-duration) var(--_global--transition-function-timing);
+	transition: all var(--wp-oembed-blog-card--transition-duration) var(--wp-oembed-blog-card--transition-function-timing);
 }
 
 @mixin wp-oembed-blog-card() {
 	&.wp-oembed-blog-card-url-template {
 		--wp-oembed-blog-card--direction: row;
 	}
+
+	border: var(--wp-oembed-blog-card--border);
 
 	> a,
 	> span {
