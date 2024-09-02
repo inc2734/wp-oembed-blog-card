@@ -223,7 +223,7 @@ class Bootstrap {
 	protected function _is_block_embed_rendering_request() {
 		$reuest_uri = filter_input( INPUT_SERVER, 'REQUEST_URI' );
 		if ( ! $reuest_uri ) {
-			$reuest_uri = esc_html( wp_unslash( $_SERVER['REQUEST_URI'] ?? '' ) ) // @phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized;
+			$reuest_uri = esc_html( wp_unslash( $_SERVER['REQUEST_URI'] ?? '' ) ); // @phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		}
 
 		if ( ! $reuest_uri ) {
