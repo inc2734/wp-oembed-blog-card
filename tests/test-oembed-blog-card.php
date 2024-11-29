@@ -18,7 +18,7 @@ class OEmbed_Blog_Card_Test extends WP_UnitTestCase {
 		new Inc2734\WP_OEmbed_Blog_Card\Bootstrap();
 
 		$this->assertEquals(
-			'<div class="js-wp-oembed-blog-card wp-oembed-blog-card"><a class="js-wp-oembed-blog-card__link" href="https://2inc.org" target="_blank"></p><div class="wp-oembed-blog-card__body"><div class="wp-oembed-blog-card__content"><div class="wp-oembed-blog-card__description">https://2inc.org</div></div></div><p></a></div>',
+			'<div class="js-wp-oembed-blog-card wp-oembed-blog-card"><a class="js-wp-oembed-blog-card__link" href="https://2inc.org" target="_blank"></p><div class="wp-oembed-blog-card__body"><div class="wp-oembed-blog-card__content"><div class="wp-oembed-blog-card__title">https://2inc.org</div></div></div><p></a></div>',
 			trim( str_replace( PHP_EOL, '', apply_filters( 'the_content', '[embed]https://2inc.org[/embed]' ) ) )
 		);
 	}
