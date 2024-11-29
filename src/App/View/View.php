@@ -62,7 +62,7 @@ class View {
 			<a class="js-wp-oembed-blog-card__link" href="%1$s" target="%2$s">
 				<div class="wp-oembed-blog-card__body">
 					<div class="wp-oembed-blog-card__content">
-						<div class="wp-oembed-blog-card__description">
+						<div class="wp-oembed-blog-card__title">
 							%1$s
 						</div>
 					</div>
@@ -117,7 +117,7 @@ class View {
 			<a href="%1$s" target="_blank">
 				<div class="wp-oembed-blog-card__body">
 					<div class="wp-oembed-blog-card__content">
-						<div class="wp-oembed-blog-card__description">
+						<div class="wp-oembed-blog-card__title">
 							%1$s
 						</div>
 					</div>
