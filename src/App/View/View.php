@@ -166,7 +166,7 @@ class View {
 						<div class="wp-oembed-blog-card__description">
 							<?php
 							if ( function_exists( 'mb_strimwidth' ) ) {
-								echo esc_html( mb_strimwidth( $cache['description'], 0, 160, '…', 'utf-8' ) );
+								echo esc_html( mb_strimwidth( $cache['description'] ?? '', 0, 160, '…', 'utf-8' ) );
 							} else {
 								echo esc_html( $cache['description'] );
 							}

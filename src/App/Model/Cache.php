@@ -76,8 +76,6 @@ class Cache {
 	}
 
 	/**
-
-
 	 * Refresh cache.
 	 *
 	 * @param string $url Target URL.
