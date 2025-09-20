@@ -86,11 +86,6 @@ class Parser {
 			return;
 		}
 
-		$this->status_code = $requester->get_status_code();
-		if ( 200 !== $this->get_status_code() && 304 !== $this->get_status_code() ) {
-			return;
-		}
-
 		if ( wp_http_validate_url( $this->url ) ) {
 			$this->content_type = $requester->get_content_type();
 		} else {
@@ -208,11 +203,6 @@ class Parser {
 			return;
 		}
 
-		$status_code = $requester->get_status_code();
-		if ( 200 !== $status_code && 304 !== $status_code ) {
-			return;
-		}
-
 		return $favicon;
 	}
 
@@ -238,11 +228,6 @@ class Parser {
 		$requester = new Requester( $thumbnail );
 		$response  = $requester->request();
 		if ( is_wp_error( $response ) ) {
-			return;
-		}
-
-		$status_code = $requester->get_status_code();
-		if ( 200 !== $status_code && 304 !== $status_code ) {
 			return;
 		}
 

@@ -62,30 +62,43 @@ class Requester {
 	 * @return WP_Error|array
 	 */
 	public function request() {
-		if ( 0 === strpos( $this->url, 'http://127.0.0.1:' ) || 0 === strpos( $this->url, 'http://localhost:' ) ) {
-			return new WP_Error(
-				'http_request_failed',
-				__( 'Requests for local URLs are not supported.', 'inc2734-wp-oembed-blog-card' )
-			);
-		}
-
 		$cache_key   = md5( wp_json_encode( $this->url ) );
 		$cache_group = 'inc2734/wp-oembed-blog-card/request';
 		$cache       = wp_cache_get( $cache_key, $cache_group );
+
 		if ( false !== $cache ) {
 			$this->response = $cache;
-			return $cache;
+		} else {
+			$this->response = wp_safe_remote_get(
+				$this->url,
+				array(
+					'timeout'     => 10,
+					'redirection' => 0,
+					'user-agent'  => $this->user_agent,
+				)
+			);
+
+			wp_cache_set( $cache_key, $this->response, $cache_group );
 		}
 
-		$this->response = wp_remote_get(
-			$this->url,
-			array(
-				'timeout'    => 10,
-				'user-agent' => $this->user_agent,
-			)
-		);
+		if ( is_wp_error( $this->response ) ) {
+			return new WP_Error(
+				'http_request_failed',
+				__( 'Can\'t be retrieved because it is on the local network or refers to an invalid URL.', 'inc2734-wp-oembed-blog-card' )
+			);
+		}
 
-		wp_cache_set( $cache_key, $this->response, $cache_group );
+		$status_code = $this->get_status_code();
+		if ( 200 !== $status_code && 304 !== $status_code ) {
+			return new WP_Error(
+				'disallowed_status_code',
+				sprintf(
+					__( 'Can\'t process URLs that return status code %1$s.', 'inc2734-wp-oembed-blog-card' ),
+					$status_code
+				)
+			);
+		}
+
 		return $this->response;
 	}
 
