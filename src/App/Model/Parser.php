@@ -17,13 +17,6 @@ class Parser {
 	protected $url;
 
 	/**
-	 * Status code of the page you want to blog card
-	 *
-	 * @var int
-	 */
-	protected $status_code;
-
-	/**
 	 * Content type of the page you want to blog card
 	 *
 	 * @var int
@@ -257,15 +250,6 @@ class Parser {
 		}
 
 		return trailingslashit( $reg[0] ) . $path;
-	}
-
-	/**
-	 * Return status code of the page you want to blog card.
-	 *
-	 * @return int
-	 */
-	public function get_status_code() {
-		return (int) $this->status_code;
 	}
 
 	/**

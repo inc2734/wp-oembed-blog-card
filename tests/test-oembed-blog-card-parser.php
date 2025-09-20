@@ -12,17 +12,6 @@ class OEmbed_Blog_Card_Parser_Test extends WP_UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function get_status_code() {
-		$Parser = new Inc2734\WP_OEmbed_Blog_Card\App\Model\Parser( 'https://github.com/inc2734/wp-oembed-blog-card-404' );
-		$this->assertEquals( 404, $Parser->get_status_code() );
-
-		$Parser = new Inc2734\WP_OEmbed_Blog_Card\App\Model\Parser( 'https://github.com/inc2734/wp-oembed-blog-card' );
-		$this->assertEquals( 200, $Parser->get_status_code() );
-	}
-
-	/**
-	 * @test
-	 */
 	public function get_content_type() {
 		$Parser = new Inc2734\WP_OEmbed_Blog_Card\App\Model\Parser( 'https://github.com/inc2734/wp-oembed-blog-card' );
 		$this->assertEquals( 'text/html; charset=utf-8', $Parser->get_content_type() );

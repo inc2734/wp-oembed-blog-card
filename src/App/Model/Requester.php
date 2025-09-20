@@ -93,6 +93,7 @@ class Requester {
 			return new WP_Error(
 				'disallowed_status_code',
 				sprintf(
+					// translators: %1$s: Status code.
 					__( 'Can\'t process URLs that return status code %1$s.', 'inc2734-wp-oembed-blog-card' ),
 					$status_code
 				)
