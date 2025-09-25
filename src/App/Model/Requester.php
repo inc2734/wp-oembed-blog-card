@@ -69,16 +69,27 @@ class Requester {
 		if ( false !== $cache ) {
 			$this->response = $cache;
 		} else {
+			$parsed_url = wp_parse_url( $this->url );
+			if (
+				empty( $parsed_url['scheme'] ) ||
+				! in_array( strtolower( (string) $parsed_url['scheme'] ), array( 'http', 'https' ), true )
+			) {
+				return new WP_Error( 'invalid_scheme', __( 'Only http/https are allowed.', 'inc2734-wp-oembed-blog-card' ) );
+			}
+
+			if ( ! wp_http_validate_url( $this->url ) ) {
+				return new WP_Error( 'invalid_url', __( 'Invalid URL.', 'inc2734-wp-oembed-blog-card' ) );
+			}
+
 			$this->response = wp_safe_remote_get(
 				$this->url,
 				array(
-					'timeout'     => 10,
-					'redirection' => 0,
-					'user-agent'  => $this->user_agent,
+					'timeout'             => 10,
+					'redirection'         => 0,
+					'limit_response_size' => 1 * MB_IN_BYTES,
+					'user-agent'          => $this->user_agent,
 				)
 			);
-
-			wp_cache_set( $cache_key, $this->response, $cache_group );
 		}
 
 		if ( is_wp_error( $this->response ) ) {
@@ -86,6 +97,11 @@ class Requester {
 				'http_request_failed',
 				__( 'Can\'t be retrieved because it is on the local network or refers to an invalid URL.', 'inc2734-wp-oembed-blog-card' )
 			);
+		}
+
+		$content_type = wp_remote_retrieve_header( $this->response, 'content-type' );
+		if ( $content_type && ! preg_match( '#^(text/html)(;|$)#i', $content_type ) ) {
+			return new WP_Error( 'disallowed_content_type', __( 'Disallowed Content-Type.', 'inc2734-wp-oembed-blog-card' ) );
 		}
 
 		$status_code = $this->get_status_code();
@@ -99,6 +115,8 @@ class Requester {
 				)
 			);
 		}
+
+		wp_cache_set( $cache_key, $this->response, $cache_group );
 
 		return $this->response;
 	}
