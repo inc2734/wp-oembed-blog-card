@@ -46,6 +46,7 @@
 	&__figure {
 		flex: 1 1 var(--wp-oembed-blog-card--figure--basis);
 		align-self: center;
+		display: grid;
 		overflow: hidden;
 
 		img {
