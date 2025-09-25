@@ -99,8 +99,46 @@ class Requester {
 			);
 		}
 
-		$content_type = wp_remote_retrieve_header( $this->response, 'content-type' );
-		if ( $content_type && ! preg_match( '#^(text/html)(;|$)#i', $content_type ) ) {
+		$content_type  = wp_remote_retrieve_header( $this->response, 'content-type' );
+		$allowed_html  = '#^(text/html|application/xhtml\+xml)(;|$)#i';
+		$allowed_image = '#^image/(avif|webp|jpeg|jpg|png|gif|bmp|x-icon|vnd\.microsoft\.icon|apng)(;|$)#i';
+		$is_allowed    =
+			( $content_type && ( preg_match( $allowed_html, $content_type )
+			|| preg_match( $allowed_image, $content_type ) ) );
+
+		if ( ! $is_allowed && $content_type && stripos( $content_type, 'application/octet-stream' ) === 0 ) {
+			$body = wp_remote_retrieve_body( $this->response );
+
+			if ( is_string( $body ) && '' !== $body ) {
+				$mime = null;
+
+				if ( function_exists( 'getimagesizefromstring' ) ) {
+					$info = @getimagesizefromstring( $body ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
+
+					if ( is_array( $info ) && ! empty( $info['mime'] ) ) {
+						$mime = strtolower( $info['mime'] );
+					}
+				}
+
+				$allowed_image_mimes = array(
+					'image/avif',
+					'image/webp',
+					'image/jpeg',
+					'image/png',
+					'image/gif',
+					'image/bmp',
+					'image/x-icon',
+					'image/vnd.microsoft.icon',
+					'image/apng',
+				);
+
+				if ( $mime && in_array( $mime, $allowed_image_mimes, true ) ) {
+					$is_allowed = true;
+				}
+			}
+		}
+
+		if ( $content_type && ! $is_allowed ) {
 			return new WP_Error( 'disallowed_content_type', __( 'Disallowed Content-Type.', 'inc2734-wp-oembed-blog-card' ) );
 		}
 
