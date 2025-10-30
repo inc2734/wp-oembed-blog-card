@@ -46,7 +46,7 @@ class Bootstrap {
 			'wp-oembed-blog-card/v1',
 			'/response',
 			array(
-				'methods'             => 'GET',
+				'methods'             => \WP_REST_Server::READABLE,
 				'callback'            => function ( $request ) {
 					$params = $request->get_params();
 					if ( empty( $params['url'] ) ) {
@@ -61,6 +61,53 @@ class Bootstrap {
 					die();
 				},
 				'permission_callback' => '__return_true',
+				'args'                => array(
+					'url' => array(
+						'required' => true,
+						'type'     => 'string',
+						'format'   => 'uri',
+					),
+				),
+			)
+		);
+
+		register_rest_route(
+			'wp-oembed-blog-card/v1',
+			'/data',
+			array(
+				'methods'             => \WP_REST_Server::READABLE,
+				'callback'            => function ( $request ) {
+					$params = $request->get_params();
+
+					if ( empty( $params['url'] ) ) {
+						return new WP_Error( 404, __( 'URL not found', 'inc2734-wp-oembed-blog-card' ) );
+					}
+
+					if ( 'wp-oembed-blog-card' === $params['providerNameSlug'] ) {
+						return Cache::get( $params['url'] );
+					}
+
+					$oembed = _wp_oembed_get_object();
+
+					return $oembed->get_data( $params['url'], array() );
+				},
+				'permission_callback' => function () {
+					if ( ! current_user_can( 'edit_posts' ) ) {
+						return new WP_Error( 'rest_forbidden', __( 'Sorry, you are not allowed requests.', 'inc2734-wp-oembed-blog-card' ), array( 'status' => rest_authorization_required_code() ) );
+					}
+					return true;
+				},
+				'args'                => array(
+					'url'              => array(
+						'required' => true,
+						'type'     => 'string',
+						'format'   => 'uri',
+					),
+					'providerNameSlug' => array(
+						'required' => true,
+						'type'     => 'string',
+					),
+				),
 			)
 		);
 	}
@@ -104,6 +151,13 @@ class Bootstrap {
 	 * @return WP_HTTP_Response|object|WP_Error    The REST Request response.
 	 */
 	public function _block_filter_oembed_result( $response, $handler, $request ) {
+		if ( is_wp_error( $response ) ) {
+			$http_status = $response->get_error_data()['status'] ?? false;
+			if ( 0 === strpos( $http_status, '50' ) || 0 === strpos( $http_status, '401' ) ) {
+				return $response;
+			}
+		}
+
 		if ( '/oembed/1.0/proxy' !== $request->get_route() ) {
 			return $response;
 		}
@@ -135,7 +189,7 @@ class Bootstrap {
 			return $response;
 		}
 
-		return array(
+		return (object) array(
 			'provider_name' => 'wp-oembed-blog-card',
 			'html'          => $html,
 		);
